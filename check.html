@@ -306,6 +306,12 @@ button{font-family:inherit;cursor:pointer;}
     1:[{id:'review', name:'📋 复盘整理'}],
     2:[{id:'mock', name:'📊 模考'},{id:'mfix', name:'📝 模考订正'}]
   };
+  var SPEC_ITEMS={
+    mock:{id:'mock', name:'📊 模考'},
+    mfix:{id:'mfix', name:'📝 模考订正'},
+    review:{id:'review', name:'📋 复盘整理'},
+    rest:{id:'rest', name:'🌴 休整日'}
+  };
   var LITE_DAYS=[0,1,2];
   function dailyFor(day){
     if(LITE_DAYS.indexOf(day)>-1) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
@@ -316,8 +322,8 @@ button{font-family:inherit;cursor:pointer;}
     if(day===0||day===2) return {tip:'📊 模考日 · 日常只留 政治 / 申论，其余模块模考已覆盖',lite:true};
     return null;
   }
-  var EMO={pol:'📰',data:'📊',tui:'🧩',num:'🔢',yan:'📝',sl:'✍️',review:'📋',mock:'📊',mfix:'📝'};
-  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正'};
+  var EMO={pol:'📰',data:'📊',tui:'🧩',num:'🔢',yan:'📝',sl:'✍️',review:'📋',mock:'📊',mfix:'📝',rest:'🌴'};
+  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正',rest:'休整日'};
   var SYM=['⬜','✅','◐'];
 
   var MOCK_TYPES={
@@ -416,12 +422,23 @@ button{font-family:inherit;cursor:pointer;}
     if(!r.custom) r.custom=[];
     return r;
   }
+  function specialItems(t,day){
+    var r=rec(t);
+    var off=r.specialOff||[], on=r.specialOn||[];
+    var arr=(SPECIAL[day]||[]).filter(function(s){ return off.indexOf(s.id)<0; })
+      .map(function(s){ return {id:s.id,name:s.name}; });
+    on.forEach(function(k){
+      var it=SPEC_ITEMS[k];
+      if(it && !arr.some(function(x){ return x.id===it.id; })) arr.push({id:it.id,name:it.name});
+    });
+    return arr;
+  }
   function groups(t,day){
     var r=rec(t);
     return [
       {key:'focus', title:'🎯 攻克', items:r.focus.map(function(f){return {id:f.id,name:'🎯 '+f.name,ref:f,type:'focus'};})},
       {key:'daily', title:'☑️ 日常', items:dailyFor(day).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
-      {key:'special', title:'⭐ 特殊', items:(SPECIAL[day]||[]).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
+      {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
       {key:'custom', title:'📌 其他', items:r.custom.map(function(c){return {id:c.id,name:'📌 '+c.name,ref:c,type:'custom'};})}
     ];
   }
@@ -498,7 +515,8 @@ button{font-family:inherit;cursor:pointer;}
     box.innerHTML='';
     var dk=dayKind(vd);
     if(dk){
-      var tip=document.createElement('div'); tip.className='daytip'; tip.textContent=dk.tip;
+      var tip=document.createElement('div'); tip.className='daytip';
+      tip.textContent = specialItems(vt,vd).length ? dk.tip : '📌 今日特殊项已顺延（日常仍保持精简）';
       box.appendChild(tip);
     }
     var doneN=0;
@@ -931,11 +949,13 @@ button{font-family:inherit;cursor:pointer;}
     Object.keys(plans).forEach(function(date){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       var g=plans[date]||{};
-      if(!g.focus && !g.custom) return;
+      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined) return;
       var r=rec(date);
       var pool=(r.focus||[]).concat(r.custom||[]);
-      r.focus=mkItems(g.focus,'f',pool);
-      r.custom=mkItems(g.custom,'c',pool);
+      if(g.focus!==undefined) r.focus=mkItems(g.focus,'f',pool);
+      if(g.custom!==undefined) r.custom=mkItems(g.custom,'c',pool);
+      if(g.off!==undefined) r.specialOff=g.off.slice();
+      if(g.on!==undefined) r.specialOn=g.on.slice();
       n++;
     });
     save();
