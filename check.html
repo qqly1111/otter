@@ -134,6 +134,17 @@ button{font-family:inherit;cursor:pointer;}
   box-shadow:0 10px 22px -12px rgba(31,157,89,.95);transition:.15s;}
 .copybtn.alt{background:#eef4f0;color:#37724e;box-shadow:none;margin-bottom:0;}
 .copybtn:active{transform:scale(.985);opacity:.94;}
+.exprow{display:flex;gap:8px;margin-top:12px;}
+.exprow .copybtn{width:auto;flex:1;margin-bottom:0;font-size:12.5px;padding:12px 5px;}
+.hint{font-size:11px;color:var(--sub);line-height:1.6;margin-top:9px;background:#fbf7ee;border-radius:10px;padding:9px 11px;}
+.modal{display:none;position:fixed;inset:0;z-index:99;background:rgba(18,38,28,.75);overflow:auto;padding:12px;}
+.modal.open{display:block;}
+.modalbox{background:#fff;border-radius:16px;max-width:600px;margin:0 auto;padding:12px;}
+.modalhd{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;color:var(--green-ink);padding:2px 4px 10px;}
+.modalhd .x{font-size:20px;color:#9aa8a0;padding:0 8px;line-height:1;}
+.modalft{display:flex;gap:8px;margin-top:10px;}
+.modalft .copybtn{width:auto;flex:1;margin-bottom:0;font-size:12.5px;padding:12px 6px;}
+#boardImg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line);}
 .foot{text-align:center;margin-top:8px;}
 .foot button{background:none;border:none;color:#a9b4af;font-size:12px;padding:9px;}
 .empty{text-align:center;color:var(--sub);font-size:12px;padding:18px 10px;line-height:1.6;}
@@ -289,10 +300,27 @@ button{font-family:inherit;cursor:pointer;}
 
   <div id="tab-week" style="display:none">
     <div class="card">
-      <div class="ct">本周复盘 <span class="p">周一 → 周日</span></div>
+      <div class="ct">上周复盘 <span class="p">刚结束的一周（周一 → 周日）</span></div>
       <div id="weekReport"><div class="empty">加载中…</div></div>
-      <button class="copybtn alt" id="printBtn" style="margin-top:12px">🖨️ 导出 / 打印为 PDF</button>
+      <div class="exprow">
+        <button class="copybtn alt" id="boardBtn">🖼️ 看板图片</button>
+        <button class="copybtn alt" id="printBtn">🖨️ 打印 / PDF</button>
+        <button class="copybtn alt" id="cpBtn">📋 复制文字</button>
+      </div>
+      <div class="hint" id="expHint">看板 = 打卡 + 模考 + 周复盘，合成一张图。手机端最稳的是「长按图片 → 保存到相册」。</div>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="imgModal">
+  <div class="modalbox">
+    <div class="modalhd"><span>整张看板 · <span id="imgSize"></span></span><span class="x" id="imgClose">✕</span></div>
+    <img id="boardImg" alt="备考打卡看板">
+    <div class="modalft">
+      <button class="copybtn alt" id="imgSave">⬇️ 保存图片</button>
+      <button class="copybtn alt" id="imgPrint">🖨️ 打印 / PDF</button>
+    </div>
+    <div class="hint" style="display:block;margin-top:9px">手机上「长按图片 → 保存到相册」最稳，存好可直接发微信。</div>
   </div>
 </div>
 
@@ -319,13 +347,13 @@ button{font-family:inherit;cursor:pointer;}
     review:{id:'review', name:'📋 复盘整理'},
     rest:{id:'rest', name:'🌴 休整日'}
   };
-  var LITE_DAYS=[0,1,2];
+  var LITE_DAYS=[0,2];
   function dailyFor(day){
     if(LITE_DAYS.indexOf(day)>-1) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
     return DAILY;
   }
   function dayKind(day){
-    if(day===1) return {tip:'📋 复盘日 · 日常只留 政治 / 申论（其余让位给复盘）',lite:true};
+    if(day===1) return {tip:'📋 复盘日 · 日常照常，另加「复盘整理」'};
     if(day===0||day===2) return {tip:'📊 模考日 · 日常只留 政治 / 申论，其余模块模考已覆盖',lite:true};
     return null;
   }
@@ -512,7 +540,8 @@ button{font-family:inherit;cursor:pointer;}
       var c=countT3(td,d.getDay()); xc+=c.xc; sl+=c.sl; last=d;
     }
     var a=(ms.getMonth()+1)+'/'+ms.getDate();
-    var b=last?((last.getMonth()+1)+'/'+last.getDate()):a;
+    var we=new Date(ms); we.setDate(ms.getDate()+6);
+    var b=(we.getMonth()+1)+'/'+we.getDate();
     return {a:a,b:b,xc:xc,sl:sl,ms:ms,last:last};
   }
   function weekStatText(){
@@ -917,24 +946,24 @@ button{font-family:inherit;cursor:pointer;}
 
   /* ================= 周复盘 ================= */
   function weekReport(){
-    var now=new Date(), tt=ymd(now);
-    var ms=monday(now);
+    var now=new Date();
+    var ms=new Date(monday(now)); ms.setDate(ms.getDate()-7);
+    var we=new Date(ms); we.setDate(ms.getDate()+6);
     var xc=0,sl=0,doneN=0,totN=0,days=0,detail=[];
     for(var i=0;i<7;i++){
       var d=new Date(ms); d.setDate(ms.getDate()+i);
-      var td=ymd(d); if(td>tt) break;
+      var td=ymd(d);
       var ts=allTasks(td,d.getDay()); if(!ts.length) continue;
-      days++;
       var c=0; ts.forEach(function(x){ var s=getState(td,x); c+=(s===1?1:(s===2?0.5:0)); });
+      if(c>0) days++;
       doneN+=c; totN+=ts.length;
       var n=countT3(td,d.getDay()); xc+=n.xc; sl+=n.sl;
       detail.push({td:td,c:c,t:ts.length});
     }
     var a=(ms.getMonth()+1)+'/'+ms.getDate();
-    var b='';
-    if(days>0){ var ld=new Date(ms); ld.setDate(ms.getDate()+days-1); b=(ld.getMonth()+1)+'/'+ld.getDate(); }
-    var wkMocks=mocks.filter(function(mm){ var md=new Date(mm.date+'T00:00:00'); return md>=ms && md<=now; });
-    var h='<div class="weekstat" style="margin:0 0 10px">📅 本周 '+a+(b?('–'+b):'')+' ｜ 打卡 '+days+' 天</div>';
+    var b=(we.getMonth()+1)+'/'+we.getDate();
+    var wkMocks=mocks.filter(function(mm){ var md=new Date(mm.date+'T00:00:00'); return md>=ms && md<=we; });
+    var h='<div class="weekstat" style="margin:0 0 10px">📅 复盘周 '+a+'–'+b+'（已结束）｜ 打卡 '+days+' 天</div>';
     h+='<table class="mtable"><tr><th>指标</th><th>数值</th></tr>'+
        '<tr><td>任务完成率</td><td>'+((totN?Math.round(doneN/totN*100):0)+'%（'+doneN+'/'+totN+'）')+'</td></tr>'+
        '<tr><td>行测做题量</td><td>'+xc+' 题</td></tr>'+
@@ -952,7 +981,7 @@ button{font-family:inherit;cursor:pointer;}
       h+='</table>';
     }
     var rep=''; try{ rep=localStorage.getItem(RKEY)||''; }catch(e){}
-    h+='<div class="sec">复盘正文（AI 撰写）</div>'+(rep?('<div class="report">'+fmtReport(rep)+'</div>'):'<div class="weekstat">（本周复盘还没推送过来）</div>');
+    h+='<div class="sec">复盘正文 · '+a+'–'+b+'</div>'+(rep?('<div class="report">'+fmtReport(rep)+'</div>'):'<div class="weekstat">（这一周的复盘还没推送过来）</div>');
     document.getElementById('weekReport').innerHTML=h;
   }
 
@@ -976,11 +1005,16 @@ button{font-family:inherit;cursor:pointer;}
     Object.keys(plans).forEach(function(date){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       var g=plans[date]||{};
-      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined) return;
+      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined && g.clear===undefined) return;
       var r=rec(date);
       var pool=(r.focus||[]).concat(r.custom||[]);
-      if(g.focus!==undefined) r.focus=mkItems(g.focus,'f',pool);
-      if(g.custom!==undefined) r.custom=mkItems(g.custom,'c',pool);
+      if(g.focus && g.focus.length) r.focus=mkItems(g.focus,'f',pool);
+      if(g.custom && g.custom.length) r.custom=mkItems(g.custom,'c',pool);
+      if(g.clear){
+        var cl=g.clear;
+        if(cl.indexOf('focus')>-1) r.focus=[];
+        if(cl.indexOf('custom')>-1) r.custom=[];
+      }
       if(g.off!==undefined) r.specialOff=g.off.slice();
       if(g.on!==undefined) r.specialOn=g.on.slice();
       if(g.rest!==undefined) r.rest=!!g.rest;
@@ -1048,6 +1082,206 @@ button{font-family:inherit;cursor:pointer;}
     })['catch'](function(){});
   }
 
+  /* ================= 看板导出（① 打卡 ② 模考 ③ 周复盘） ================= */
+  function reportMd(){ try{ return localStorage.getItem(RKEY)||''; }catch(e){ return ''; } }
+  function fmtNow(){ var d=new Date(); return (d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function ymdCN(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function weekAggOf(ms0){
+    var ms=new Date(ms0), now=new Date(), tt=ymd(now), xc=0,sl=0,dn=0,tn=0,days=0;
+    for(var i=0;i<7;i++){
+      var d=new Date(ms); d.setDate(ms.getDate()+i);
+      var td=ymd(d); if(td>tt) break;
+      var ts=allTasks(td,d.getDay()); if(!ts.length) continue;
+      var c=0; ts.forEach(function(x){ var s=getState(td,x); c+=(s===1?1:(s===2?0.5:0)); });
+      if(c>0) days++;
+      dn+=c; tn+=ts.length;
+      var n=countT3(td,d.getDay()); xc+=n.xc; sl+=n.sl;
+    }
+    var we=new Date(ms); we.setDate(ms.getDate()+6);
+    return {days:days,dn:dn,tn:tn,xc:xc,sl:sl,pct:(tn?Math.round(dn/tn*100):0),
+      a:(ms.getMonth()+1)+'/'+ms.getDate(), b:(we.getMonth()+1)+'/'+we.getDate(), ms:ms, we:we};
+  }
+  function weekAgg(){ return weekAggOf(monday(new Date())); }
+  function prevWeekAgg(){ var m=new Date(monday(new Date())); m.setDate(m.getDate()-7); return weekAggOf(m); }
+  function weekMockN(ms,we){ return mocks.filter(function(m){ var d=new Date(m.date+'T00:00:00'); return (!ms||d>=ms) && (!we||d<=we); }).length; }
+  function mockText(){
+    var s='【模考记录】';
+    mocks.slice().sort(function(a,b){ return a.date<b.date?-1:1; }).slice(-6).forEach(function(m){
+      var c=calcMock(m);
+      s+='\n'+m.date.slice(5)+' '+m.type+'  '+dispTotal(m,c)+'/'+fullMark(m.type)+
+         ' ｜ 对 '+c.totNum+'/'+MOCK_TYPES[m.type].total+' ｜ 用时 '+c.totMin+'′'+(m.beat!=null?(' ｜ 击败 '+m.beat+'%'):'');
+    });
+    return s;
+  }
+  function boardText(){
+    var a=weekAgg();
+    return buildText()+'\n\n'+mockText()+'\n\n【本周复盘 '+a.a+'–'+a.b+'】\n'+(reportMd()||'（还没推送）');
+  }
+
+  var BOARD_W=1080, B_REP=30;
+  function bFont(ctx,px,bold){ ctx.font=(bold?'700 ':'')+px+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif'; }
+  function bWrap(ctx,text,maxW){
+    var out=[],cur='',chars=String(text==null?'':text).split('');
+    for(var i=0;i<chars.length;i++){
+      var ch=chars[i];
+      if(ch==='\n'){ out.push(cur); cur=''; continue; }
+      var t=cur+ch;
+      if(cur!=='' && ctx.measureText(t).width>maxW){ out.push(cur); cur=ch; }
+      else cur=t;
+    }
+    out.push(cur); return out;
+  }
+  function bClip(ctx,text,maxW,px,bold){
+    bFont(ctx,px||22,bold);
+    var s=String(text==null?'':text);
+    if(ctx.measureText(s).width<=maxW) return s;
+    while(s.length>1 && ctx.measureText(s+'…').width>maxW) s=s.slice(0,-1);
+    return s+'…';
+  }
+  function paintBoard(ctx,dry){
+    var PAD=46,W=BOARD_W,xL=PAD,xR=W-PAD,CW=W-PAD*2,y=0;
+    var GI='#186b40',G='#1f9d59',INK='#26382e',SUB='#6f8279',LINE='#e2ede7',AMB='#e0952a',DIM='#c3ccc7';
+    function T(s,x,yy,px,col,bold,align){
+      bFont(ctx,px,bold); ctx.fillStyle=col; ctx.textAlign=align||'left';
+      if(!dry) ctx.fillText(String(s==null?'':s),x,yy);
+    }
+    function rule(yy){ if(!dry){ ctx.fillStyle=LINE; ctx.fillRect(xL,yy,CW,1); } }
+    function para(s,yy,px,col,maxW,lh){
+      var ls=bWrap(ctx,s,maxW);
+      bFont(ctx,px,false); ctx.fillStyle=col; ctx.textAlign='left';
+      ls.forEach(function(l,i){ if(!dry) ctx.fillText(l,xL,yy+i*lh+px); });
+      return yy+ls.length*lh;
+    }
+    function head(t,sub){
+      y+=16; T(t,xL,y+30,32,GI,true);
+      if(sub) T(sub,xR,y+29,21,SUB,false,'right');
+      rule(y+44); y+=44+16;
+    }
+    // ---- 顶部 ----
+    T('备考打卡看板',xL,PAD+42,46,GI,true);
+    T('生成 '+fmtNow(),xR,PAD+40,21,SUB,false,'right');
+    var A=weekAgg(), P=prevWeekAgg();
+    T(bClip(ctx,'连续打卡 '+streak()+' 天 ｜ 本周 '+A.a+'–'+A.b+' 完成率 '+A.pct+'% ｜ 行测 '+A.xc+' 题 · 申论 '+A.sl+' 道',CW,23,true),xL,PAD+82,23,G,true);
+    y=PAD+82+18; rule(y); y+=22;
+    // ---- ① 打卡 ----
+    var dv=viewDate,vt=ymd(dv),vd=dv.getDay();
+    head('① 今日打卡',(dv.getMonth()+1)+'/'+dv.getDate()+' 周'+weekNames[vd]);
+    var dn=0,tot=0;
+    groups(vt,vd).forEach(function(g){
+      if(!g.items.length) return;
+      T(g.title,xL,y+22,23,G,true); y+=34;
+      g.items.forEach(function(it){
+        var st=getState(vt,it),a=getN(vt,it,'t1'),b=getN(vt,it,'t2'),c3=getN(vt,it,'t3');
+        tot++; dn+=(st===1?1:(st===2?0.5:0));
+        T(st===1?'✓':(st===2?'◐':'○'),xL,y+26,26,(st===1?G:(st===2?AMB:DIM)),true);
+        T(bClip(ctx,String(it.name).replace(/^(?:🎯|📌)\s*/,''),CW-280,24,false),xL+44,y+26,24,INK,false);
+        if(!noBox(it)){
+          var s=(it.type==='fix'&&it.id==='sl')?(c3?c3+' 道':''):((a?a+'′ ':'')+((b||c3)?(b+'/'+c3+' 题'):''));
+          if(s) T(s,xR,y+26,22,SUB,false,'right');
+        }
+        y+=42;
+      });
+      y+=10;
+    });
+    T('完成 '+dn+'/'+tot+' 项'+(rec(vt).rest?'（🌴 休整日）':''),xL,y+24,23,SUB,true); y+=24+12;
+    // ---- ② 模考 ----
+    var mk=mocks.slice().sort(function(a,b){ return a.date<b.date?1:-1; }).slice(0,6);
+    head('② 模考','最近 '+mk.length+' 次');
+    if(!mk.length){ T('（还没有记录）',xL,y+24,23,SUB); y+=34; }
+    else{
+      T('日期',xL,y+22,21,SUB,true); T('类型',xL+125,y+22,21,SUB,true);
+      T('总分',xL+255,y+22,21,SUB,true); T('对/题',xL+400,y+22,21,SUB,true);
+      T('用时',xL+580,y+22,21,SUB,true); T('击败',xR,y+22,21,SUB,true,'right');
+      y+=32; rule(y); y+=12;
+      mk.forEach(function(m){
+        var c=calcMock(m);
+        T(m.date.slice(5),xL,y+24,23,INK);
+        T(m.type,xL+125,y+24,23,INK);
+        T(String(dispTotal(m,c)),xL+255,y+24,23,G,true);
+        T(c.totNum+'/'+MOCK_TYPES[m.type].total,xL+400,y+24,23,INK);
+        T(c.totMin+'′',xL+580,y+24,23,INK);
+        T(m.beat!=null?(m.beat+'%'):'—',xR,y+24,23,SUB,false,'right');
+        y+=40;
+      });
+      y+=6;
+    }
+    // ---- ③ 周复盘 ----
+    head('③ 周复盘',P.a+'–'+P.b+'（已结束）');
+    T('打卡 '+P.days+' 天 ｜ 完成率 '+P.pct+'%',xL,y+24,23,INK,true); y+=38;
+    T('行测 '+P.xc+' 题 ｜ 申论 '+P.sl+' 道 ｜ 模考 '+weekMockN(P.ms,P.we)+' 次',xL,y+24,23,INK); y+=24+18;
+    var rep=reportMd();
+    if(!rep){ T('（本周复盘还没推送过来）',xL,y+24,23,SUB); y+=34; }
+    else{
+      T('复盘要点',xL,y+22,23,G,true); y+=34;
+      var all=rep.split('\n').map(function(l){ return l.trim(); })
+        .filter(function(t){ return t && !/^#/.test(t); })
+        .map(function(t){ return t.replace(/^[*\-]\s+/,'· '); });
+      var cut=all.slice(0,B_REP);
+      if(all.length>B_REP) cut.push('…（完整版见「考公」笔记）');
+      y=para(cut.join('\n'),y,23,INK,CW,40);
+    }
+    // ---- 页脚 ----
+    y+=22; rule(y); y+=16;
+    T('考拉 · 备考打卡表',xL,y+20,20,'#a2afa8');
+    T('qqly1111.github.io/otter/check.html',xR,y+20,20,'#a2afa8',false,'right');
+    return y+20+40;
+  }
+  function boardPng(){
+    var sc=document.createElement('canvas'); sc.width=16; sc.height=16;
+    var sctx=sc.getContext('2d'), h;
+    for(var i=0;i<7;i++){
+      h=paintBoard(sctx,true);
+      if(h<=3900 || B_REP<=6) break;
+      B_REP-=6;
+    }
+    var cv=document.createElement('canvas'); cv.width=BOARD_W; cv.height=Math.ceil(h);
+    var ctx=cv.getContext('2d');
+    ctx.fillStyle='#f7faf8'; ctx.fillRect(0,0,cv.width,cv.height);
+    paintBoard(ctx,false);
+    return cv.toDataURL('image/png');
+  }
+  var boardUrl=null;
+  function hideBoard(){ document.getElementById('imgModal').classList.remove('open'); }
+  function showBoard(){
+    try{ boardUrl=boardPng(); }
+    catch(e){ alert('生成图片失败：'+(e&&e.message||e)); return; }
+    document.getElementById('boardImg').src=boardUrl;
+    document.getElementById('imgSize').textContent=Math.round(boardUrl.length*0.75/1024)+' KB';
+    document.getElementById('imgModal').classList.add('open');
+  }
+  function saveBoard(){
+    if(!boardUrl){ showBoard(); return; }
+    try{
+      var a=document.createElement('a'); a.href=boardUrl;
+      a.download='备考打卡看板_'+ymd(new Date())+'.png';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ a.remove(); },1500);
+    }catch(e){ alert('保存失败，请长按图片 → 保存到相册'); }
+  }
+  function printBoard(){
+    if(!boardUrl) showBoard();
+    if(!boardUrl) return;
+    var w=null; try{ w=window.open('','_blank'); }catch(e){}
+    var html='<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>备考打卡看板</title>'+
+      '<style>body{margin:0;background:#fff;}img{width:100%;display:block;}@media print{@page{margin:8mm;}}</style></head>'+
+      '<body><img src="'+boardUrl+'"><scr'+'ipt>window.onload=function(){setTimeout(function(){try{window.print();}catch(e){}},500);};</scr'+'ipt></body></html>';
+    if(w && w.document){ try{ w.document.open(); w.document.write(html); w.document.close(); return; }catch(e){} }
+    saveBoard();
+  }
+  function copyText(t,okMsg){
+    if(!t){ alert('没有可复制的内容'); return; }
+    function done(){ alert(okMsg||'已复制 ✅'); }
+    function fb(){
+      var ta=document.createElement('textarea'); ta.value=t;
+      ta.style.position='fixed'; ta.style.top='-9999px'; document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+      ta.remove(); ok?done():alert('复制失败，请长按内容手动选择');
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done)['catch'](fb); }
+    else fb();
+  }
+
   /* ================= 事件 ================= */
   document.querySelectorAll('.tabs button').forEach(function(b){
     b.addEventListener('click',function(){
@@ -1070,7 +1304,13 @@ button{font-family:inherit;cursor:pointer;}
     });
   });
   document.getElementById('mockSave').addEventListener('click',saveMock);
-  document.getElementById('printBtn').addEventListener('click',function(){ window.print(); });
+  document.getElementById('boardBtn').addEventListener('click',showBoard);
+  document.getElementById('printBtn').addEventListener('click',printBoard);
+  document.getElementById('cpBtn').addEventListener('click',function(){ copyText(boardText(),'已复制整张看板（文字版）✅'); });
+  document.getElementById('imgSave').addEventListener('click',saveBoard);
+  document.getElementById('imgPrint').addEventListener('click',printBoard);
+  document.getElementById('imgClose').addEventListener('click',hideBoard);
+  document.getElementById('imgModal').addEventListener('click',function(ev){ if(ev.target.id==='imgModal') hideBoard(); });
   document.getElementById('prevDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()-1); render(); });
   document.getElementById('nextDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()+1); render(); });
   document.getElementById('todayTxt').addEventListener('click',function(){ viewDate=new Date(); render(); });
@@ -1097,6 +1337,11 @@ button{font-family:inherit;cursor:pointer;}
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
+er.register('sw.js').catch(function(){}); });
 }
 </script>
 </body>
