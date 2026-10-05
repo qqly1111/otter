@@ -120,6 +120,13 @@ button{font-family:inherit;cursor:pointer;}
 .weekstat{font-size:12px;color:#3f5a4c;background:#f3f8f5;border-radius:12px;padding:10px 12px;
   margin-top:11px;line-height:1.6;}
 .weekstat b{color:var(--green-ink);}
+.report{background:#fbfdfc;border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-top:4px;}
+.rp-h1{font-size:14px;font-weight:800;color:var(--green-ink);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+.rp-h2{font-size:12.5px;font-weight:700;color:var(--green);margin:12px 0 6px;}
+.rp-ul{margin:0 0 4px;padding-left:16px;}
+.rp-ul li{font-size:12px;color:#3f5a4c;line-height:1.65;margin-bottom:3px;}
+.rp-p{font-size:12px;color:#3f5a4c;line-height:1.65;margin-bottom:4px;}
+.report b{color:#186b40;}
 
 /* ---------- buttons ---------- */
 .copybtn{width:100%;background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;border:none;
@@ -297,7 +304,7 @@ button{font-family:inherit;cursor:pointer;}
     {id:'pol',  name:'📰 政治/常识'},
     {id:'data', name:'📊 资料分析'},
     {id:'tui',  name:'🧩 图推'},
-    {id:'num',  name:'🔢 数量关系'},
+    {id:'num',  name:'🔢 数量·类型专项'},
     {id:'yan',  name:'📝 言语逻辑'},
     {id:'sl',   name:'✍️ 申论/综应'}
   ];
@@ -323,7 +330,7 @@ button{font-family:inherit;cursor:pointer;}
     return null;
   }
   var EMO={pol:'📰',data:'📊',tui:'🧩',num:'🔢',yan:'📝',sl:'✍️',review:'📋',mock:'📊',mfix:'📝',rest:'🌴'};
-  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正',rest:'休整日'};
+  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量专项',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正',rest:'休整日'};
   var SYM=['⬜','✅','◐'];
 
   var MOCK_TYPES={
@@ -352,7 +359,10 @@ button{font-family:inherit;cursor:pointer;}
     {id:'sm2',date:'2026-09-06',type:'职测',total:'119.2',beat:96.7,mods:{pol:{r:'3',mm:'2',ss:''},cs:{r:'8',mm:'5',ss:''},yan:{r:'23',mm:'22',ss:''},num:{r:'3',mm:'5',ss:''},tui:{r:'5',mm:'8',ss:'12'},dy:{r:'10',mm:'9',ss:'24'},lb:{r:'8',mm:'3',ss:'54'},lj:{r:'9',mm:'11',ss:'5'},zl:{r:'11',mm:'21',ss:''}}},
     {id:'sm3',date:'2026-09-13',type:'职测',total:'124.9',beat:98.2,mods:{pol:{r:'2',mm:'3',ss:'17'},cs:{r:'10',mm:'6',ss:'29'},yan:{r:'21',mm:'19',ss:'31'},num:{r:'5',mm:'6',ss:'46'},tui:{r:'4',mm:'7',ss:'11'},dy:{r:'9',mm:'8',ss:'8'},lb:{r:'9',mm:'6',ss:'29'},lj:{r:'9',mm:'12',ss:'50'},zl:{r:'14',mm:'18',ss:'31'}}},
     {id:'sm4',date:'2026-09-14',type:'行测',total:'76',beat:null,mods:{pol:{r:'12',mm:'7',ss:'10'},cs:{r:'8',mm:'5',ss:'58'},yan:{r:'24',mm:'33',ss:'8'},num:{r:'6',mm:'19',ss:'25'},tui:{r:'4',mm:'5',ss:'6'},dy:{r:'6',mm:'8',ss:'58'},lb:{r:'4',mm:'3',ss:'38'},lj:{r:'9',mm:'14',ss:'4'},zl:{r:'18',mm:'22',ss:'30'}}},
-    {id:'sm5',date:'2026-09-19',type:'行测',total:'75.6',beat:null,mods:{pol:{r:'8',mm:'7',ss:''},cs:{r:'4',mm:'4',ss:''},yan:{r:'27',mm:'31',ss:''},num:{r:'8',mm:'12',ss:''},tui:{r:'4',mm:'10',ss:''},dy:{r:'10',mm:'9',ss:''},lb:{r:'5',mm:'2',ss:''},lj:{r:'9',mm:'15',ss:''},zl:{r:'15',mm:'27',ss:''}}}
+    {id:'sm5',date:'2026-09-19',type:'行测',total:'75.6',beat:null,mods:{pol:{r:'8',mm:'7',ss:''},cs:{r:'4',mm:'4',ss:''},yan:{r:'27',mm:'31',ss:''},num:{r:'8',mm:'12',ss:''},tui:{r:'4',mm:'10',ss:''},dy:{r:'10',mm:'9',ss:''},lb:{r:'5',mm:'2',ss:''},lj:{r:'9',mm:'15',ss:''},zl:{r:'15',mm:'27',ss:''}}},
+    {id:'sm6',date:'2026-09-22',type:'职测',total:'117.9',beat:93.7,mods:{pol:{r:'3',mm:'2',ss:'15'},cs:{r:'7',mm:'7',ss:'41'},yan:{r:'20',mm:'22',ss:'42'},num:{r:'4',mm:'8',ss:'21'},tui:{r:'4',mm:'7',ss:'37'},dy:{r:'10',mm:'8',ss:'18'},lb:{r:'7',mm:'5',ss:'38'},lj:{r:'8',mm:'12',ss:'33'},zl:{r:'15',mm:'14',ss:'43'}}},
+    {id:'sm7',date:'2026-09-27',type:'行测',total:'71.3',beat:93.8,mods:{pol:{r:'8',mm:'6',ss:'33'},cs:{r:'3',mm:'5',ss:'54'},yan:{r:'31',mm:'32',ss:'28'},num:{r:'2',mm:'11',ss:'21'},tui:{r:'4',mm:'10',ss:'5'},dy:{r:'8',mm:'9',ss:'14'},lb:{r:'5',mm:'2',ss:'13'},lj:{r:'8',mm:'11',ss:'37'},zl:{r:'16',mm:'30',ss:'10'}}},
+    {id:'sm8',date:'2026-10-04',type:'行测',total:'72.2',beat:94,mods:{pol:{r:'8',mm:'8',ss:'49'},cs:{r:'5',mm:'4',ss:'18'},yan:{r:'26',mm:'31',ss:'8'},num:{r:'4',mm:'14',ss:'26'},tui:{r:'4',mm:'6',ss:'45'},dy:{r:'8',mm:'9',ss:'8'},lb:{r:'5',mm:'2',ss:'36'},lj:{r:'8',mm:'11',ss:'56'},zl:{r:'18',mm:'25',ss:'32'}}}
   ];
 
   var store={};
@@ -389,14 +399,23 @@ button{font-family:inherit;cursor:pointer;}
     save();
   }
   function applyMockSeed(){
-    try{ if(localStorage.getItem(MKEY+'_seed3')==='1') return; }catch(e){return;}
+    try{ if(localStorage.getItem(MKEY+'_seed4')==='1') return; }catch(e){return;}
     SEED_MOCKS.forEach(function(m){
       var ex=mocks.filter(function(x){ return (x.date===m.date && x.type===m.type); })[0];
-      if(ex){ if(ex.total==null||ex.total==='') ex.total=m.total; }
-      else { mocks.push(JSON.parse(JSON.stringify(m))); }
+      if(!ex){ mocks.push(JSON.parse(JSON.stringify(m))); return; }
+      if(ex.total==null||ex.total==='') ex.total=m.total;
+      if(ex.beat==null && m.beat!=null) ex.beat=m.beat;
+      if(!ex.mods) ex.mods={};
+      Object.keys(m.mods||{}).forEach(function(k){
+        if(!ex.mods[k]) ex.mods[k]={r:'',mm:'',ss:''};
+        ['r','mm','ss'].forEach(function(f){
+          var nv=(m.mods[k]||{})[f];
+          if((ex.mods[k][f]==null||ex.mods[k][f]==='') && nv!=null && nv!=='') ex.mods[k][f]=nv;
+        });
+      });
     });
     dedupMocks();
-    try{ localStorage.setItem(MKEY+'_seed3','1'); }catch(e){}
+    try{ localStorage.setItem(MKEY+'_seed5','1'); }catch(e){}
     saveMocks();
   }
   function dedupMocks(){
@@ -424,6 +443,7 @@ button{font-family:inherit;cursor:pointer;}
   }
   function specialItems(t,day){
     var r=rec(t);
+    if(r.rest) return [];
     var off=r.specialOff||[], on=r.specialOn||[];
     var arr=(SPECIAL[day]||[]).filter(function(s){ return off.indexOf(s.id)<0; })
       .map(function(s){ return {id:s.id,name:s.name}; });
@@ -437,7 +457,7 @@ button{font-family:inherit;cursor:pointer;}
     var r=rec(t);
     return [
       {key:'focus', title:'🎯 攻克', items:r.focus.map(function(f){return {id:f.id,name:'🎯 '+f.name,ref:f,type:'focus'};})},
-      {key:'daily', title:'☑️ 日常', items:dailyFor(day).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
+      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day)).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
       {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
       {key:'custom', title:'📌 其他', items:r.custom.map(function(c){return {id:c.id,name:'📌 '+c.name,ref:c,type:'custom'};})}
     ];
@@ -513,11 +533,17 @@ button{font-family:inherit;cursor:pointer;}
     var gs=groups(vt,vd);
     var box=document.getElementById('secs');
     box.innerHTML='';
-    var dk=dayKind(vd);
-    if(dk){
-      var tip=document.createElement('div'); tip.className='daytip';
-      tip.textContent = specialItems(vt,vd).length ? dk.tip : '📌 今日特殊项已顺延（日常仍保持精简）';
-      box.appendChild(tip);
+    if(rec(vt).rest){
+      var rtip=document.createElement('div'); rtip.className='daytip';
+      rtip.textContent='🌴 休整日 · 今天不排任务，安心休息';
+      box.appendChild(rtip);
+    } else {
+      var dk=dayKind(vd);
+      if(dk){
+        var tip=document.createElement('div'); tip.className='daytip';
+        tip.textContent = specialItems(vt,vd).length ? dk.tip : '📌 今日特殊项已顺延（日常仍保持精简）';
+        box.appendChild(tip);
+      }
     }
     var doneN=0;
     gs.forEach(function(g){
@@ -925,7 +951,8 @@ button{font-family:inherit;cursor:pointer;}
         h+='<tr><td>'+mm.date.slice(5)+'</td><td>'+mm.type+'</td><td>'+dispTotal(mm,c)+'</td><td>'+(c.totMin?(c.totScore/c.totMin).toFixed(2):'-')+'</td></tr>'; });
       h+='</table>';
     }
-    h+='<div class="sec">复盘（AI 撰写）</div><div class="weekstat">（复盘正文由 AI 生成后粘贴到这里）</div>';
+    var rep=''; try{ rep=localStorage.getItem(RKEY)||''; }catch(e){}
+    h+='<div class="sec">复盘正文（AI 撰写）</div>'+(rep?('<div class="report">'+fmtReport(rep)+'</div>'):'<div class="weekstat">（本周复盘还没推送过来）</div>');
     document.getElementById('weekReport').innerHTML=h;
   }
 
@@ -949,13 +976,14 @@ button{font-family:inherit;cursor:pointer;}
     Object.keys(plans).forEach(function(date){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       var g=plans[date]||{};
-      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined) return;
+      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined) return;
       var r=rec(date);
       var pool=(r.focus||[]).concat(r.custom||[]);
       if(g.focus!==undefined) r.focus=mkItems(g.focus,'f',pool);
       if(g.custom!==undefined) r.custom=mkItems(g.custom,'c',pool);
       if(g.off!==undefined) r.specialOff=g.off.slice();
       if(g.on!==undefined) r.specialOn=g.on.slice();
+      if(g.rest!==undefined) r.rest=!!g.rest;
       n++;
     });
     save();
@@ -987,6 +1015,37 @@ button{font-family:inherit;cursor:pointer;}
       if(done) return; done=true; clearTimeout(to);
       syncStatus('📡 同步失败（离线？）— 可手动导入');
     });
+  }
+
+  /* ================= 周报复盘同步 ================= */
+  var REPORT_TOPIC='otter-daka-report-7h2k9m4qz3p';
+  var REPORT_URL='https://ntfy.sh/'+REPORT_TOPIC+'/json?poll=1&since=all';
+  var RKEY='kaogong_report_v1';
+  function fmtReport(txt){
+    var lines=String(txt||'').split('\n'), h='', inList=false;
+    function closeList(){ if(inList){ h+='</ul>'; inList=false; } }
+    lines.forEach(function(ln){
+      var t=String(ln).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+      if(/^#\s+/.test(t)){ closeList(); h+='<div class="rp-h1">'+t.replace(/^#\s+/,'')+'</div>'; return; }
+      if(/^##\s+/.test(t)){ closeList(); h+='<div class="rp-h2">'+t.replace(/^##\s+/,'')+'</div>'; return; }
+      if(/^\s*[*\-]\s+/.test(t)){ if(!inList){ h+='<ul class="rp-ul">'; inList=true; } h+='<li>'+t.replace(/^\s*[*\-]\s+/,'')+'</li>'; return; }
+      if(!t.trim()){ closeList(); return; }
+      closeList(); h+='<div class="rp-p">'+t+'</div>';
+    });
+    closeList();
+    return h;
+  }
+  function syncReport(){
+    fetch(REPORT_URL,{cache:'no-store'}).then(function(r){ return r.text(); }).then(function(txt){
+      var lines=String(txt||'').split('\n').filter(function(x){ return x.trim(); });
+      var payload=null;
+      for(var i=lines.length-1;i>=0;i--){
+        try{ var o=JSON.parse(lines[i]); if(o && typeof o.message==='string' && o.message.indexOf('#')>-1){ payload=o.message; break; } }catch(e){}
+      }
+      if(!payload) return;
+      try{ localStorage.setItem(RKEY,payload); }catch(e){}
+      if(document.getElementById('tab-week').style.display!=='none') weekReport();
+    })['catch'](function(){});
   }
 
   /* ================= 事件 ================= */
@@ -1031,7 +1090,8 @@ button{font-family:inherit;cursor:pointer;}
   renderMockList();
   renderCharts();
   syncPlan(false);
-  document.addEventListener('visibilitychange',function(){ if(!document.hidden) syncPlan(false); });
+  syncReport();
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden){ syncPlan(false); syncReport(); } });
 })();
 </script>
 <script>
