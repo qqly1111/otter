@@ -248,7 +248,11 @@ button{font-family:inherit;cursor:pointer;}
       <button class="copybtn alt" id="importBtn">📥 手动导入次日计划</button>
       <button class="copybtn alt" id="syncBtn" style="margin-top:9px">🔄 立即同步计划</button>
     </div>
-    <div class="foot"><button id="reset">清空全部打卡记录</button></div>
+    <div class="foot">
+      <button id="forceBtn">🔄 强制更新（还看到旧版就点它）</button>
+      <button id="reset">清空全部打卡记录</button>
+      <div id="buildTxt" style="font-size:10.5px;color:#b3bfb9;margin-top:3px"></div>
+    </div>
   </div>
 
   <div id="tab-mock" style="display:none">
@@ -348,11 +352,20 @@ button{font-family:inherit;cursor:pointer;}
     rest:{id:'rest', name:'🌴 休整日'}
   };
   var LITE_DAYS=[0,2];
-  function dailyFor(day){
-    if(LITE_DAYS.indexOf(day)>-1) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
+  function isLite(day,r){
+    if(r && r.liteOverride!==undefined) return !!r.liteOverride;
+    return LITE_DAYS.indexOf(day)>-1;
+  }
+  function dailyFor(day,r){
+    if(isLite(day,r)) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
     return DAILY;
   }
-  function dayKind(day){
+  function dayKind(day,r){
+    if(r && r.liteOverride!==undefined){
+      return r.liteOverride
+        ? {tip:'🧭 自定义日型 · 日常只留 政治 / 申论', lite:true, fixed:true}
+        : {tip:'🧭 自定义日型 · 日常照常', lite:false, fixed:true};
+    }
     if(day===1) return {tip:'📋 复盘日 · 日常照常，另加「复盘整理」'};
     if(day===0||day===2) return {tip:'📊 模考日 · 日常只留 政治 / 申论，其余模块模考已覆盖',lite:true};
     return null;
@@ -485,7 +498,7 @@ button{font-family:inherit;cursor:pointer;}
     var r=rec(t);
     return [
       {key:'focus', title:'🎯 攻克', items:r.focus.map(function(f){return {id:f.id,name:'🎯 '+f.name,ref:f,type:'focus'};})},
-      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day)).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
+      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day,r)).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
       {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
       {key:'custom', title:'📌 其他', items:r.custom.map(function(c){return {id:c.id,name:'📌 '+c.name,ref:c,type:'custom'};})}
     ];
@@ -567,10 +580,10 @@ button{font-family:inherit;cursor:pointer;}
       rtip.textContent='🌴 休整日 · 今天不排任务，安心休息';
       box.appendChild(rtip);
     } else {
-      var dk=dayKind(vd);
+      var dk=dayKind(vd,rec(vt));
       if(dk){
         var tip=document.createElement('div'); tip.className='daytip';
-        tip.textContent = specialItems(vt,vd).length ? dk.tip : '📌 今日特殊项已顺延（日常仍保持精简）';
+        tip.textContent = (dk.fixed || specialItems(vt,vd).length) ? dk.tip : '📌 今日特殊项已顺延（日常仍保持精简）';
         box.appendChild(tip);
       }
     }
@@ -982,6 +995,7 @@ button{font-family:inherit;cursor:pointer;}
     }
     var rep=''; try{ rep=localStorage.getItem(RKEY)||''; }catch(e){}
     h+='<div class="sec">复盘正文 · '+a+'–'+b+'</div>'+(rep?('<div class="report">'+fmtReport(rep)+'</div>'):'<div class="weekstat">（这一周的复盘还没推送过来）</div>');
+    h+='<div style="text-align:center;font-size:10.5px;color:#b3bfb9;margin-top:12px">构建 '+BUILD+'</div>';
     document.getElementById('weekReport').innerHTML=h;
   }
 
@@ -1005,7 +1019,7 @@ button{font-family:inherit;cursor:pointer;}
     Object.keys(plans).forEach(function(date){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       var g=plans[date]||{};
-      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined && g.clear===undefined) return;
+      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined && g.clear===undefined && g.lite===undefined) return;
       var r=rec(date);
       var pool=(r.focus||[]).concat(r.custom||[]);
       if(g.focus && g.focus.length) r.focus=mkItems(g.focus,'f',pool);
@@ -1018,6 +1032,7 @@ button{font-family:inherit;cursor:pointer;}
       if(g.off!==undefined) r.specialOff=g.off.slice();
       if(g.on!==undefined) r.specialOn=g.on.slice();
       if(g.rest!==undefined) r.rest=!!g.rest;
+      if(g.lite!==undefined) r.liteOverride=!!g.lite;
       n++;
     });
     save();
@@ -1282,6 +1297,15 @@ button{font-family:inherit;cursor:pointer;}
     else fb();
   }
 
+  var BUILD='2026-10-07 21:45';
+  function forceUpdate(){
+    var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
+    var jobs=[];
+    try{ if(window.caches&&caches.keys) jobs.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); }catch(e){}
+    try{ if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations) jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); }catch(e){}
+    if(jobs.length){ Promise.all(jobs).then(go)['catch'](go); setTimeout(go,1400); } else go();
+  }
+
   /* ================= 事件 ================= */
   document.querySelectorAll('.tabs button').forEach(function(b){
     b.addEventListener('click',function(){
@@ -1311,6 +1335,8 @@ button{font-family:inherit;cursor:pointer;}
   document.getElementById('imgPrint').addEventListener('click',printBoard);
   document.getElementById('imgClose').addEventListener('click',hideBoard);
   document.getElementById('imgModal').addEventListener('click',function(ev){ if(ev.target.id==='imgModal') hideBoard(); });
+  document.getElementById('buildTxt').textContent='构建 '+BUILD;
+  document.getElementById('forceBtn').addEventListener('click',forceUpdate);
   document.getElementById('prevDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()-1); render(); });
   document.getElementById('nextDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()+1); render(); });
   document.getElementById('todayTxt').addEventListener('click',function(){ viewDate=new Date(); render(); });
