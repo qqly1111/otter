@@ -205,18 +205,19 @@ button{font-family:inherit;cursor:pointer;}
 .mgbar{height:10px;border-radius:99px;overflow:hidden;display:flex;gap:2px;margin:9px 0 7px}
 .mgbar i{display:block;height:100%;background:#dde9e3}
 .mgbar i.done{background:#1f9d59}
+.mgbar i.half{background:#8fc7a9}
 .mgnames{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:10px;color:#7b8883}
-.wcard{background:#fff;border-radius:14px;padding:11px 12px;margin-bottom:9px;border-left:4px solid #d6e5dd;box-shadow:0 1px 3px rgba(20,40,30,.04)}
+.wcard{background:#fff;border-radius:14px;padding:13px 14px;margin-bottom:9px;border-left:4px solid #d6e5dd;box-shadow:0 1px 3px rgba(20,40,30,.04)}
 .wcard.p1{border-left-color:#3b82c4}
 .wcard.p2{border-left-color:#e0952a}
 .wcard.p3{border-left-color:#1f9d59}
 .wcard.cur{box-shadow:0 4px 16px rgba(31,157,89,.18)}
 .wcard.past{opacity:.5}
 .whd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
-.whd b{font-size:12.5px}
-.whd em{font-style:normal;font-size:10px;color:#7b8883}
-.wtag{font-size:9.5px;padding:1px 7px;border-radius:99px;background:#eef4f1;color:#5a7368;margin-left:6px;font-style:normal}
-.wch{font-size:11.5px;color:#2b6ca3;line-height:1.6;margin:2px 0 6px}
+.whd b{font-size:13.5px}
+.whd em{font-style:normal;font-size:11px;color:#7b8883}
+.wtag{font-size:10.5px;padding:1px 7px;border-radius:99px;background:#eef4f1;color:#5a7368;margin-left:6px;font-style:normal}
+.wch{font-size:12.5px;color:#2b6ca3;line-height:1.7;margin:3px 0 7px}
 .wtodo{list-style:none;padding:0;margin:0}
 .wtodo li{font-size:11.5px;padding:5px 0 5px 23px;position:relative;line-height:1.45;border-top:1px dashed #eaeff0;cursor:pointer}
 .wtodo li:first-child{border-top:none}
@@ -229,6 +230,31 @@ button{font-family:inherit;cursor:pointer;}
 .gfchip{font-size:10.5px;padding:3px 9px;border-radius:99px;background:#f0f5f2;color:#7b8883;border:1px solid #e3ece7}
 .gfchip.s1{background:#eef5ff;color:#2b6ca3;border-color:#cfe0f5}
 .gfchip.s2{background:#e9f7ef;color:#1f8a4f;border-color:#bfe7d0}
+.gflegend{font-size:11px;color:#8a968f;margin-top:7px;line-height:1.65}
+.wgoal{margin:4px 0 7px}
+.wgrow{display:grid;grid-template-columns:58px minmax(0,1fr) auto 30px;gap:9px;align-items:center;font-size:12.5px;padding:6px 0;border-top:1px dashed #eef2ef}
+.wgrow:first-child{border-top:none}
+.wgk{color:#7b8883;font-size:11.5px;font-weight:600}
+.wgv{color:#2c3a33;line-height:1.45}
+.wgn{font-size:11.5px;color:#1f8a4f;font-weight:700;white-space:nowrap}
+.wck{width:27px;height:27px;border-radius:9px;border:1.5px solid #d6e5dd;background:#fff;color:#c3d1c9;font-size:13px;line-height:1;padding:0;cursor:pointer}
+.wck.on{background:#1f9d59;border-color:#1f9d59;color:#fff}
+.wgrow.wkeep{margin-top:6px;border-top:1px dashed #e6ece8;padding-top:8px}
+.wgrow.wkeep .wgk{color:#a3aeaa}
+.wgrow.wkeep .wgv{color:#7b8883;font-size:11.5px;line-height:1.55}
+.wstat{font-size:12.5px;margin-top:9px;padding:8px 11px;border-radius:9px;line-height:1.55}
+.wstat.ok{background:#eef8f1;color:#1f8a4f}
+.wstat.warn{background:#fff7e8;color:#a9720f}
+.wstat.bad{background:#fdeeee;color:#b23b3b}
+.wstat.fut{background:#f4f6f5;color:#8a968f}
+.evTop{display:flex;gap:8px;margin:2px 0 10px}
+.evL{flex:1;background:#f6f9f7;border-radius:12px;padding:9px 6px;text-align:center}
+.evL b{display:block;font-size:19px;color:#1f8a4f;line-height:1.15}
+.evL b i{font-style:normal;font-size:11px;color:#9aa8a2;font-weight:400}
+.evL span{display:block;font-size:10.5px;color:#7b8883;margin-top:3px;white-space:nowrap}
+.evLine{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:#5a7368;padding:7px 0 0;border-top:1px dashed #eef2ef;margin-top:8px}
+.evadv{font-size:12px;line-height:1.65;background:#fff7e8;color:#8a5c00;border-radius:10px;padding:10px 12px;margin-top:9px}
+
 @media print{.tabs,.foot,.copybtn,.seg,.addrow,.legend{display:none!important;}
   body{background:#fff;padding:0;}.card{box-shadow:none;border:1px solid var(--line);}}
 </style>
@@ -285,6 +311,9 @@ button{font-family:inherit;cursor:pointer;}
     <div class="foot">
       <button id="forceBtn">🔄 强制更新（还看到旧版就点它）</button>
       <button id="exportBtn">⬇️ 导出数据备份（JSON）</button>
+      <button id="importBtn" style="margin-top:8px;background:#f4f7fb;color:#2b6ca3;border-color:#cfe0f5">⬆️ 导入备份（JSON）</button>
+      <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      <div class="note" style="margin-top:6px">换手机、换浏览器、或误清缓存后，用这里把数据搬回来。</div>
       <button id="reset">清空全部打卡记录</button>
       <div id="buildTxt" style="font-size:10.5px;color:#b3bfb9;margin-top:3px"></div>
     </div>
@@ -344,9 +373,15 @@ button{font-family:inherit;cursor:pointer;}
       <div class="cdrow" id="cdRow"></div>
     </div>
     <div class="card">
+      <div class="ct">进度评估 <span class="p">现在该到哪儿</span></div>
+      <div id="evBox"></div>
+    </div>
+    <div class="card">
       <div class="ct">文职公共科目进度 <span class="p" id="gfTip"></span></div>
       <div class="mgbar" id="gfBar"></div>
-      <div class="gfwrap" id="gfBox"></div>
+      <button id="gfToggle" class="copybtn alt" style="width:100%;margin-top:8px">展开 22 个单元 ▾</button>
+      <div class="gfwrap" id="gfBox" style="display:none"></div>
+      <div class="gflegend">○ 没碰 ｜ ◐ 看过一遍（书/课） ｜ ✔ 刷题 30 题且正确率 ≥70%<br>点击切换三档。岗位能力（言语/数量/判断/资料）不单独计格，随行测保温推进。</div>
     </div>
     <div class="card">
       <div class="ct">管理学进度 <span class="p" id="mgTip"></span></div>
@@ -395,7 +430,15 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
+  var BUILD='2026-10-20 22:50';
   var KEY='kaogong_daka_v5';
+  function forceUpdate(){
+    var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
+    var jobs=[];
+    try{ if(window.caches&&caches.keys) jobs.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); }catch(e){}
+    try{ if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations) jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); }catch(e){}
+    if(jobs.length){ Promise.all(jobs).then(go)['catch'](go); setTimeout(go,1400); } else go();
+  }
   var MKEY='kaogong_mocks_v1';
   var DAILY=[
     {id:'pol',  name:'📰 政治/常识'},
@@ -403,7 +446,7 @@ button{font-family:inherit;cursor:pointer;}
     {id:'tui',  name:'🧩 图推'},
     {id:'num',  name:'🔢 数量'},
     {id:'sl',   name:'✍️ 申论/综应'},
-    {id:'mgmt', name:'📚 管理学 · 一章'},
+    {id:'mgmt', name:'📚 管理学'},
     {id:'gf',   name:'🎖️ 国防军队'}
   ];
   var SPECIAL={
@@ -421,7 +464,7 @@ button{font-family:inherit;cursor:pointer;}
     return LITE_DAYS.indexOf(day)>-1;
   }
   function dailyFor(day,r){
-    if(isLite(day,r)) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'||d.id==='mgmt'; });
+    if(isLite(day,r)) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
     return DAILY;
   }
   function dayKind(day,r){
@@ -565,11 +608,30 @@ button{font-family:inherit;cursor:pointer;}
     });
     return arr;
   }
+  var MGCH=['概述','决策','组织','领导','控制','组织行为学概述','个体行为','群体行为','组织行为',
+            '人力资源管理概述','人力资源规划','招聘与录用','人员配置与流动','培训与开发','绩效与薪酬',
+            '公共事业管理概述','公共事业分类管理','危机管理',
+            '行政伦理概述','行政伦理规范','行政纪律','忠诚·责任·正义','伦理监督',
+            '公文概述','法定公文','管理写作','作文思路'];
+  function mgName(t){
+    try{
+      var d=new Date(t+'T00:00:00'), st=new Date(2026,9,20,0,0,0);
+      var i=Math.round((d-st)/86400000);
+      if(i<0||i>=27) return '';
+      return '第'+(i+1)+'章 '+MGCH[i];
+    }catch(e){ return ''; }
+  }
+
   function groups(t,day){
     var r=rec(t);
     return [
       {key:'focus', title:'🎯 攻克', items:r.focus.map(function(f){return {id:f.id,name:'🎯 '+f.name,ref:f,type:'focus'};})},
-      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day,r)).map(function(d){return {id:d.id,name:d.name,type:'fix'};})},
+      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day,r)).map(function(d){
+        var nm=d.name;
+        if(d.id==='mgmt' && mgName(t)) nm='📚 管理学 · '+mgName(t);
+        if(d.id==='pol' && gfUnitOf(t)) nm='📰 政治·常识 · '+gfUnitOf(t).n;
+        return {id:d.id,name:nm,type:'fix'};
+      })},
       {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
       {key:'custom', title:'📌 其他', items:r.custom.map(function(c){return {id:c.id,name:'📌 '+c.name,ref:c,type:'custom'};})}
     ];
@@ -1422,46 +1484,75 @@ button{font-family:inherit;cursor:pointer;}
   var rdone={}; try{rdone=JSON.parse(localStorage.getItem(RKEY2)||'{}')||{};}catch(e){rdone={};}
   function saveRoad(){ try{localStorage.setItem(RKEY2,JSON.stringify(rdone));}catch(e){} }
 
-  var GKEY='kaogong_gf_v1';
+  var GKEY='kaogong_gf_v2';
   var gfs={}; try{gfs=JSON.parse(localStorage.getItem(GKEY)||'{}')||{};}catch(e){gfs={};}
-  var GFMODS=[{k:'b1',n:'马理论'},{k:'b2',n:'人文社会'},{k:'b3',n:'国防军队'},{k:'b4',n:'时政'},
-              {k:'k1',n:'言语'},{k:'k2',n:'数量'},{k:'k3',n:'判断'},{k:'k4',n:'资料'}];
+  var GFG=[
+    {g:'政治',    u:['马理论','毛中特','习思想','党史军史']},
+    {g:'法律',    u:['宪法','民法','刑法','行政法','其他法']},
+    {g:'经济',    u:['市场经济','宏观调控','微观基础','国际金融']},
+    {g:'人文社会',u:['中国历史','文学文化','社会常识']},
+    {g:'科技',    u:['科技常识','军事科技']},
+    {g:'国防军队',u:['国防常识','军队常识','军事思想','军事法规']}
+  ];
+  var GFUNITS=[];
+  GFG.forEach(function(g,gi){ g.u.forEach(function(n,ui){ GFUNITS.push({k:'u'+gi+'_'+ui,n:n,g:g.g}); }); });
+  function gfSeen(){ var n=0; GFUNITS.forEach(function(u){ if((gfs[u.k]||0)>=1) n++; }); return n; }
+  function gfDone(){ var n=0; GFUNITS.forEach(function(u){ if((gfs[u.k]||0)>=2) n++; }); return n; }
+  function gfPct(){ var t=0; GFUNITS.forEach(function(u){ t+=(gfs[u.k]||0); }); return Math.round(t/2/GFUNITS.length*100); }
 
   var MG=[{n:'管理基础',c:5},{n:'组织行为',c:4},{n:'人力资源',c:6},{n:'公共事业',c:3},
           {n:'行政伦理',c:5},{n:'公文写作',c:2},{n:'管理写作',c:2}];
 
   var ROAD=[
-   {w:'W1',a:'2026-10-19',b:'2026-10-25',ph:1,tag:'打底期',
+   {w:'W1',a:'2026-10-19',b:'2026-10-25',ph:1,tag:'打底期',ms:'2026-10-20',
     ch:'管理学 第1–6章｜概述·决策·组织·领导·控制·组织行为学概述',
-    todo:['管理学 10/20–10/25 每天一章（共 6 章）','每章：手画导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
+    goal:{mg:6,seen:4,done:0,sl:6},
+    gfNote:'累计 4 个单元（政治）',
+    keep:'申论/综应 每天 1 题｜行测保温（掐表）｜国防军队'},
    {w:'W2',a:'2026-10-26',b:'2026-11-01',ph:1,tag:'打底期',
     ch:'管理学 第7–13章｜个体行为·群体行为·组织行为·人力概述·人力规划·招聘·配置流动',
-    todo:['管理学 每天一章（共 7 章）','每章：导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
+    goal:{mg:13,seen:9,done:0,sl:13},
+    gfNote:'累计 9 个（＋法律 5）',
+    keep:'申论/综应 每天 1 题｜行测保温（掐表）｜国防军队'},
    {w:'W3',a:'2026-11-02',b:'2026-11-08',ph:1,tag:'打底期',
     ch:'管理学 第14–20章｜培训开发·绩效薪酬·公共事业概述·分类管理·危机管理·伦理概述·伦理规范',
-    todo:['管理学 每天一章（共 7 章）','每章：导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
-   {w:'W4',a:'2026-11-09',b:'2026-11-15',ph:1,tag:'打底期·第一轮完',
+    goal:{mg:20,seen:16,done:0,sl:20},
+    gfNote:'累计 16 个（＋经济·人文）',
+    keep:'行测保温（掐表）｜国防军队累计 14h'},
+   {w:'W4',a:'2026-11-09',b:'2026-11-15',ph:1,tag:'打底期·一轮完',
     ch:'管理学 第21–27章｜行政纪律·忠诚责任正义·伦理监督·公文概述·法定公文·管理写作·作文思路',
-    todo:['管理学 每天一章（共 7 章，11/15 收尾）','10 类法定公文过一遍','手写公文 1 篇（通知）','行测保温 每天','国防军队 2h']},
+    goal:{mg:27,seen:22,done:0,sl:27},
+    gfNote:'累计 22 个（全过一遍）',
+    keep:'申论/综应 每天 1 题｜10 类法定公文过一遍｜手写公文 1 篇'},
    {w:'W5',a:'2026-11-16',b:'2026-11-22',ph:2,tag:'二轮·刷题',
     ch:'管理学二轮｜第1篇 管理学基础 ＋ 第2篇 组织行为学 客观题二刷',
-    todo:['第1、2篇 客观题全部二刷','错题回看导图（只补红笔处）','论述题：列 1 篇提纲（不写全文）','行测保温 每天','文职公共科真题 1 套']},
+    goal:{mg:27,seen:22,done:9,sl:34},
+    gfNote:'刷题达标：政治·法律',
+    keep:'申论/综应 每天 1 题｜第1、2篇客观题二刷｜论述题列提纲'},
    {w:'W6',a:'2026-11-23',b:'2026-11-29',ph:2,tag:'二轮·国考周',
     ch:'管理学二轮｜第3–7篇 客观题二刷 ＋ 写作题入门',
-    todo:['第3–7篇 客观题全部二刷','论述题：手写 1 篇 1000 字（限时 60′）','11/29 国考：按 10/17 的时间表执行','考完不对答案，第二天转文职']},
+    goal:{mg:27,seen:22,done:13,sl:41},
+    gfNote:'刷题达标：＋国防军队',
+    keep:'申论/综应 每天 1 题｜第3–7篇二刷｜11/29 国考'},
    {w:'W7',a:'2026-11-30',b:'2026-12-06',ph:3,tag:'文职冲刺',
     ch:'管理学三轮｜27 章错题回看 ＋ 公文 ＋ 论述题',
-    todo:['27 章错题本过一遍','公文：手写 1 篇（报告或请示）','论述题：手写 1 篇 1000 字','文职公共科真题 1 套（按真实时间）','国防军队：军队人才网时政专章']},
+    goal:{mg:27,seen:22,done:13,sl:48},
+    gfNote:'达标单元错题回看',
+    keep:'申论/综应 每天 1 题｜27 章错题过一遍｜公文＋论述各 1 篇'},
    {w:'W8',a:'2026-12-07',b:'2026-12-13',ph:3,tag:'文职冲刺·最后一周',
-    ch:'冲刺｜框架为主，不碰新内容',
-    todo:['论述题：手写 1 篇 1000 字','公文：手写 1 篇（通知）','文职公共科真题 1 套','只看 7 张篇导图 ＋ 大纲目录','考前 2 天不写新题，只默框架']}
+    ch:'冲刺｜只默框架，不碰新内容',
+    goal:{mg:27,seen:22,done:13,sl:55},
+    gfNote:'只默 22 个单元标题',
+    keep:'申论/综应 每天 1 题｜考前 2 天只默框架'}
   ];
 
   function d2(d){ return new Date(d+'T00:00:00'); }
   function daysBetween(a,b){ return Math.round((b-a)/86400000); }
 
-  /* 管理学已过章数：按打卡里「📚 管理学」打勾的天数累计 */
-  function mgmtPassed(){
+  /* 管理学已过章数：按「🎯 攻克」里已打勾的「管理学·第N章」条目累计 */
+  var MGADJ=0; try{MGADJ=parseInt(localStorage.getItem('kaogong_mgadj_v1')||'0',10)||0;}catch(e){MGADJ=0;}
+  function mgmtPassed(){ var n=mgRaw(); return n<0?0:(n>27?27:n); }
+  function mgRaw(){
     var n=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
     while(d<=end){
       var r=store[ymd(d)];
@@ -1470,38 +1561,110 @@ button{font-family:inherit;cursor:pointer;}
     }
     return n>27?27:n;
   }
+  /* 公共科目基本知识：按天序号推进，10/20 = 第 1 个单元 */
+  function gfIdxOf(t){
+    try{
+      var d=new Date(t+'T00:00:00'), st=new Date(2026,9,20,0,0,0);
+      var i=Math.round((d-st)/86400000);
+      return (i>=0 && i<GFUNITS.length)? i : -1;
+    }catch(e){ return -1; }
+  }
+  function gfUnitOf(t){ var i=gfIdxOf(t); return i<0?null:GFUNITS[i]; }
 
   function gfRender(){
-    var done=0;
-    GFMODS.forEach(function(m){ done+=(gfs[m.k]||0); });
+    var seen=gfSeen(), done=gfDone(), pct=gfPct();
     var bar='';
-    GFMODS.forEach(function(m){
-      var st=gfs[m.k]||0;
-      bar+='<span style="display:flex;flex:1;gap:2px"><i class="'+(st>=2?'done':'')+'" style="flex:1"></i></span>';
+    GFUNITS.forEach(function(u){
+      var st=gfs[u.k]||0;
+      bar+='<i class="'+(st>=2?'done':(st>=1?'half':''))+'"></i>';
     });
     var gb=document.getElementById('gfBar'); if(gb) gb.innerHTML=bar;
 
-    function chip(m){
-      var st=gfs[m.k]||0;
-      var mark=['○','◐','✔'][st];
-      return '<span class="gfchip s'+st+'" data-g="'+m.k+'">'+mark+' '+m.n+'</span>';
-    }
     var box=document.getElementById('gfBox');
     if(box){
-      box.innerHTML='<div class="gfrow"><b>基本知识</b>'+GFMODS.slice(0,4).map(chip).join('')+'</div>'+
-                    '<div class="gfrow"><b>岗位能力</b>'+GFMODS.slice(4).map(chip).join('')+'</div>';
+      var h='';
+      GFG.forEach(function(g,gi){
+        h+='<div class="gfrow"><b>'+g.g+'</b>';
+        g.u.forEach(function(n,ui){
+          var k='u'+gi+'_'+ui, st=gfs[k]||0;
+          h+='<span class="gfchip s'+st+'" data-g="'+k+'">'+['○','◐','✔'][st]+' '+n+'</span>';
+        });
+        h+='</div>';
+      });
+      box.innerHTML=h;
       box.querySelectorAll('.gfchip').forEach(function(c){
         c.addEventListener('click',function(){
           var k=c.getAttribute('data-g');
           gfs[k]=((gfs[k]||0)+1)%3;
           try{localStorage.setItem(GKEY,JSON.stringify(gfs));}catch(e){}
           gfRender();
+          if(document.getElementById('evBox')) renderEval();
         });
       });
     }
-    var nMock=0; mocks.forEach(function(m){ if(m.type==='文职公共课') nMock++; });
+    var nMock=0; mocks.forEach(function(mk){ if(mk.type==='文职公共课') nMock++; });
     var t=document.getElementById('gfTip');
-    if(t) t.textContent='过一遍 '+done+' / 16 ｜ 文职真题 '+(nMock||0)+' 套';
+    if(t) t.textContent='看过 '+seen+'/22 ｜ 达标 '+done+'/22 ｜ 覆盖 '+pct+'%';
+  }
+
+  function weekStat(r, prevMg, mg){
+    var today=new Date(); today.setHours(0,0,0,0);
+    var a=d2(r.a), b=d2(r.b);
+    if(daysBetween(today,b)<0){
+      if(mg>=r.goal.mg) return {c:'ok', t:'\ud83d\udfe2 已达标：这一周结束时管理学 '+r.goal.mg+' 章，实际到了 '+mg+' 章'};
+      return {c:'bad', t:'\ud83d\udd34 未达标：目标 '+r.goal.mg+' 章，实际 '+mg+' 章，差 '+(r.goal.mg-mg)+' 章'};
+    }
+    if(daysBetween(today,a)<=0){
+      var ms=d2(r.ms||r.a);
+      var den=Math.max(1,daysBetween(ms,b)+1);
+      var el=Math.min(den, Math.max(0,daysBetween(ms,today)+1));
+      var exp=Math.round(prevMg+(r.goal.mg-prevMg)*el/den);
+      var gap=exp-mg;
+      if(gap<=0) return {c:'ok', t:'\ud83d\udfe2 按计划推进：第 '+el+'/'+den+' 天，应达 '+exp+' 章，实际 '+mg+' 章'};
+      if(gap<=2) return {c:'warn', t:'\ud83d\udfe1 落后 '+gap+' 章：第 '+el+'/'+den+' 天应达 '+exp+' 章，实际 '+mg+' 章'};
+      return {c:'bad', t:'\ud83d\udd34 落后 '+gap+' 章：第 '+el+'/'+den+' 天应达 '+exp+' 章，实际 '+mg+' 章 —— 本周内需补课'};
+    }
+    return {c:'fut', t:'尚未开始，目标累计 '+r.goal.mg+' 章'};
+  }
+
+  function renderEval(){
+    var today=new Date(); today.setHours(0,0,0,0);
+    var mg=mgmtPassed(), seen=gfSeen(), done=gfDone();
+    var box=document.getElementById('evBox'); if(!box) return;
+
+    var cur=null, curIdx=-1;
+    for(var i=0;i<ROAD.length;i++){
+      if(daysBetween(today,d2(ROAD[i].a))<=0 && daysBetween(today,d2(ROAD[i].b))>=0){ cur=ROAD[i]; curIdx=i; break; }
+    }
+
+    var h='<div class="evTop">'+
+      '<div class="evL"><b>'+mg+'<i>/27</i></b><span>管理学 章</span></div>'+
+      '<div class="evL"><b>'+seen+'<i>/22</i></b><span>看过</span></div>'+
+      '<div class="evL"><b>'+done+'<i>/22</i></b><span>刷题达标</span></div>'+
+    '</div>';
+
+    if(cur){
+      var prev=curIdx>0?ROAD[curIdx-1].goal.mg:0;
+      var ms0=d2(cur.ms||cur.a), den0=Math.max(1,daysBetween(ms0,d2(cur.b))+1);
+      var el=Math.min(den0,Math.max(0,daysBetween(ms0,today)+1));
+      var exp=Math.round(prev+(cur.goal.mg-prev)*el/den0);
+      var st=weekStat(cur,prev,mg);
+      h+='<div class="wstat '+st.c+'">'+st.t+'</div>';
+    }
+
+    var start=d2('2026-10-20');
+    var elAll=Math.max(1,daysBetween(start,today)+1);
+    var spd=mg/elAll;
+    if(elAll>=2){
+      var left=Math.max(0,daysBetween(today,d2('2026-11-15')));
+      var proj=Math.min(27, Math.round(mg + spd*left));
+      h+='<div class="evLine"><span>速度 '+spd.toFixed(2)+' 章/天</span><span>到 11/15 约 '+proj+' 章</span></div>';
+      if(proj<27){
+        var need=((27-mg)/Math.max(1,left)).toFixed(2);
+        h+='<div class="evadv">按这个速度到不了 27 章。要么提到 <b>'+need+' 章/天</b>，要么把 W4 收尾顺延到 11/20（二轮整体后移 5 天）。</div>';
+      }
+    }
+    box.innerHTML=h;
   }
 
   function renderRoad(){
@@ -1510,26 +1673,26 @@ button{font-family:inherit;cursor:pointer;}
     var cd='';
     marks.forEach(function(x){
       var dd=daysBetween(today,x.d);
-      cd+='<div><b>'+(dd>=0?dd:'—')+'</b><span>'+x.n+'</span></div>';
+      cd+='<div><b>'+(dd>=0?dd:'\u2014')+'</b><span>'+x.n+'</span></div>';
     });
     document.getElementById('cdRow').innerHTML=cd;
 
     var passed=mgmtPassed();
     var off=0,bar='',names='';
-    MG.forEach(function(m){
-      var d=Math.max(0,Math.min(m.c,passed-off));
+    MG.forEach(function(mg0){
+      var d=Math.max(0,Math.min(mg0.c,passed-off));
       var seg='';
-      if(d>=m.c) seg='<i class="done" style="flex:'+m.c+'"></i>';
-      else if(d<=0) seg='<i style="flex:'+m.c+'"></i>';
-      else seg='<i class="done" style="flex:'+d+'"></i><i style="flex:'+(m.c-d)+'"></i>';
-      bar+='<span style="display:flex;flex:'+m.c+';gap:2px">'+seg+'</span>';
-      names+='<span>'+(d===m.c?'✅ ':(d>0?'◐ ':'○ '))+m.n+' '+d+'/'+m.c+'</span>';
-      off+=m.c;
+      if(d>=mg0.c) seg='<i class="done" style="flex:'+mg0.c+'"></i>';
+      else if(d<=0) seg='<i style="flex:'+mg0.c+'"></i>';
+      else seg='<i class="done" style="flex:'+d+'"></i><i style="flex:'+(mg0.c-d)+'"></i>';
+      bar+='<span style="display:flex;flex:'+mg0.c+';gap:2px">'+seg+'</span>';
+      names+='<span>'+(d===mg0.c?'\u2705 ':(d>0?'\u25d0 ':'\u25cb '))+mg0.n+' '+d+'/'+mg0.c+'</span>';
+      off+=mg0.c;
     });
     var mb=document.getElementById('mgBar'); if(mb) mb.innerHTML=bar;
     var mn=document.getElementById('mgNames'); if(mn) mn.innerHTML=names;
     var tip=document.getElementById('mgTip');
-    if(tip) tip.textContent='已过 '+passed+' / 27 章（按打卡天数计）';
+    if(tip) tip.textContent='已过 '+passed+' / 27 章';
 
     var now='';
     for(var i=0;i<ROAD.length;i++){
@@ -1539,42 +1702,46 @@ button{font-family:inherit;cursor:pointer;}
     var rn=document.getElementById('roadNow'); if(rn) rn.textContent=now;
 
     var h='';
-    ROAD.forEach(function(r){
+    ROAD.forEach(function(r,i){
       var s0=d2(r.a), s1=d2(r.b), cls='p'+r.ph, st='';
       if(daysBetween(today,s1)<0){ cls+=' past'; st='已过'; }
       else if(daysBetween(today,s0)<=0 && daysBetween(today,s1)>=0){ cls+=' cur'; st='本周'; }
-      var t='';
-      r.todo.forEach(function(x,ti){
-        var k=r.w+'_'+ti;
-        t+='<li data-k="'+k+'" class="'+(rdone[k]?'on':'')+'">'+x+'</li>';
-      });
+      var prev=i>0?ROAD[i-1].goal.mg:0;
+      var ws=weekStat(r,prev,passed);
+      var reach0=(passed>=r.goal.mg), reach1=(gfSeen()>=r.goal.seen);
+      function ck(k,auto){
+        var on = (k in rdone) ? !!rdone[k] : !!auto;
+        return '<button class="wck '+(on?'on':'')+'" data-k="'+k+'">\u2713</button>';
+      }
       h+='<div class="wcard '+cls+'">'+
          '<div class="whd"><b>'+r.w+'<span class="wtag">'+r.tag+'</span>'+(st?' <span class="wtag">'+st+'</span>':'')+'</b>'+
-         '<em>'+r.a.slice(5).replace('-','/')+' – '+r.b.slice(5).replace('-','/')+'</em></div>'+
+         '<em>'+r.a.slice(5).replace('-','/')+' \u2013 '+r.b.slice(5).replace('-','/')+'</em></div>'+
          '<div class="wch">'+r.ch+'</div>'+
-         '<ul class="wtodo">'+t+'</ul></div>';
+         '<div class="wgoal">'+
+           '<div class="wgrow"><span class="wgk">管理学</span><span class="wgv">累计 <b>'+r.goal.mg+'</b> 章</span><span class="wgn">'+(st==='已过'?'':passed+'/27')+'</span>'+ck(r.w+'_g0',reach0)+'</div>'+
+           '<div class="wgrow"><span class="wgk">基本知识</span><span class="wgv">'+r.gfNote+'</span><span class="wgn">'+gfSeen()+'/22</span>'+ck(r.w+'_g1',reach1)+'</div>'+
+           
+         '</div>'+
+         '<div class="wgrow wkeep"><span class="wgk">维持</span><span class="wgv">'+r.keep+'</span><span class="wgn"></span>'+ck(r.w+'_keep',false)+'</div>'+
+         (ws.c==='fut'?'':'<div class="wstat '+ws.c+'">'+ws.t+'</div>')+
+         '</div>';
     });
     var wc=document.getElementById('weekCards');
     if(wc){
       wc.innerHTML=h;
-      wc.querySelectorAll('.wtodo li').forEach(function(li){
-        li.addEventListener('click',function(){
-          var k=li.getAttribute('data-k');
+      wc.querySelectorAll('.wck').forEach(function(b){
+        b.addEventListener('click',function(ev){
+          ev.stopPropagation();
+          var k=b.getAttribute('data-k');
           if(rdone[k]) delete rdone[k]; else rdone[k]=1;
-          saveRoad(); li.classList.toggle('on');
+          saveRoad();
+          b.classList.toggle('on');
         });
       });
     }
-    gfRender();
-  }
 
-  var BUILD='2026-10-20 18:45';
-  function forceUpdate(){
-    var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
-    var jobs=[];
-    try{ if(window.caches&&caches.keys) jobs.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); }catch(e){}
-    try{ if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations) jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); }catch(e){}
-    if(jobs.length){ Promise.all(jobs).then(go)['catch'](go); setTimeout(go,1400); } else go();
+    gfRender();
+    renderEval();
   }
 
   /* ================= 事件 ================= */
@@ -1613,8 +1780,8 @@ button{font-family:inherit;cursor:pointer;}
   document.getElementById('repPrev').addEventListener('click',function(){ repStep(-1); });
   document.getElementById('repNext').addEventListener('click',function(){ repStep(1); });
   function exportData(){
-    var dump={exported:new Date().toISOString().slice(0,19),
-              daka:store, mocks:mocks, road:rdone, gf:gfs, reports:reps};
+    var dump={exported:new Date().toISOString().slice(0,19), ver:2,
+              daka:store, mocks:mocks, road:rdone, gf:gfs, reports:reps, mgadj:MGADJ};
     var txt=JSON.stringify(dump,null,1);
     var fn='kaogong-backup-'+ymd(new Date())+'.json';
     var ok=false;
@@ -1630,7 +1797,36 @@ button{font-family:inherit;cursor:pointer;}
     alert(ok ? ('已导出 '+fn+'\n同时复制到剪贴板，建议也粘一份到备忘录。')
              : ('已复制到剪贴板（'+Math.round(txt.length/1024)+'KB），请粘贴到备忘录保存。'));
   }
+  function importData(file){
+    var fr=new FileReader();
+    fr.onload=function(){
+      try{
+        var o=JSON.parse(fr.result), n=0;
+        if(o.daka && typeof o.daka==='object'){ localStorage.setItem(KEY, JSON.stringify(o.daka)); n+=Object.keys(o.daka).length; }
+        if(o.mocks) localStorage.setItem(MKEY, JSON.stringify(o.mocks));
+        if(o.road) localStorage.setItem(RKEY2, JSON.stringify(o.road));
+        if(o.gf) localStorage.setItem(GKEY, JSON.stringify(o.gf));
+        if(o.reports) localStorage.setItem(RPKEY, JSON.stringify(o.reports));
+        if(o.mgadj!==undefined) localStorage.setItem('kaogong_mgadj_v1', String(o.mgadj));
+        alert('导入完成：'+n+' 天打卡记录 + 模考/路线/公共科目/周报。\n页面将刷新。');
+        setTimeout(function(){ location.reload(); }, 500);
+      }catch(e){ alert('导入失败：'+e.message); }
+    };
+    fr.readAsText(file);
+  }
   document.getElementById('exportBtn').addEventListener('click',exportData);
+  document.getElementById('importBtn').addEventListener('click',function(){ document.getElementById('importFile').click(); });
+  var GFOPEN=false;
+  function gfToggleUI(){
+    var b=document.getElementById('gfBox'), t=document.getElementById('gfToggle');
+    if(!b||!t) return;
+    b.style.display = GFOPEN?'':'none';
+    t.textContent = GFOPEN?'收起 22 个单元 ▴':'展开 22 个单元 ▾';
+  }
+  document.getElementById('gfToggle').addEventListener('click',function(){ GFOPEN=!GFOPEN; gfToggleUI(); });
+  document.getElementById('importFile').addEventListener('change',function(e){
+    if(e.target.files && e.target.files[0]) importData(e.target.files[0]);
+  });
   document.getElementById('buildTxt').textContent='构建 '+BUILD;
   document.getElementById('forceBtn').addEventListener('click',forceUpdate);
   document.getElementById('prevDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()-1); render(); });
