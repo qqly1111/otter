@@ -430,7 +430,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-10-20 22:50';
+  var BUILD='2026-10-20 23:18';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -446,8 +446,7 @@ button{font-family:inherit;cursor:pointer;}
     {id:'tui',  name:'🧩 图推'},
     {id:'num',  name:'🔢 数量'},
     {id:'sl',   name:'✍️ 申论/综应'},
-    {id:'mgmt', name:'📚 管理学'},
-    {id:'gf',   name:'🎖️ 国防军队'}
+    {id:'mgmt', name:'📚 管理学'}
   ];
   var SPECIAL={
     1:[{id:'review', name:'📋 复盘整理'}]
@@ -629,7 +628,6 @@ button{font-family:inherit;cursor:pointer;}
       {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day,r)).map(function(d){
         var nm=d.name;
         if(d.id==='mgmt' && mgName(t)) nm='📚 管理学 · '+mgName(t);
-        if(d.id==='pol' && gfUnitOf(t)) nm='📰 政治·常识 · '+gfUnitOf(t).n;
         return {id:d.id,name:nm,type:'fix'};
       })},
       {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
