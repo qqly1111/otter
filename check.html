@@ -197,6 +197,38 @@ button{font-family:inherit;cursor:pointer;}
 .kpi b{display:block;font-size:16px;color:var(--green);line-height:1.25;}
 .kpi span{font-size:10px;color:var(--sub);}
 
+/* ---------- 路线页 ---------- */
+.cdrow{display:flex;gap:6px}
+.cdrow div{flex:1;text-align:center;background:#f3f8f5;border-radius:10px;padding:8px 2px}
+.cdrow b{display:block;font-size:17px;color:#1f9d59;line-height:1.15}
+.cdrow span{font-size:9.5px;color:#7b8883}
+.mgbar{height:10px;border-radius:99px;overflow:hidden;display:flex;gap:2px;margin:9px 0 7px}
+.mgbar i{display:block;height:100%;background:#dde9e3}
+.mgbar i.done{background:#1f9d59}
+.mgnames{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:10px;color:#7b8883}
+.wcard{background:#fff;border-radius:14px;padding:11px 12px;margin-bottom:9px;border-left:4px solid #d6e5dd;box-shadow:0 1px 3px rgba(20,40,30,.04)}
+.wcard.p1{border-left-color:#3b82c4}
+.wcard.p2{border-left-color:#e0952a}
+.wcard.p3{border-left-color:#1f9d59}
+.wcard.cur{box-shadow:0 4px 16px rgba(31,157,89,.18)}
+.wcard.past{opacity:.5}
+.whd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.whd b{font-size:12.5px}
+.whd em{font-style:normal;font-size:10px;color:#7b8883}
+.wtag{font-size:9.5px;padding:1px 7px;border-radius:99px;background:#eef4f1;color:#5a7368;margin-left:6px;font-style:normal}
+.wch{font-size:11.5px;color:#2b6ca3;line-height:1.6;margin:2px 0 6px}
+.wtodo{list-style:none;padding:0;margin:0}
+.wtodo li{font-size:11.5px;padding:5px 0 5px 23px;position:relative;line-height:1.45;border-top:1px dashed #eaeff0;cursor:pointer}
+.wtodo li:first-child{border-top:none}
+.wtodo li:before{content:'\25A1';position:absolute;left:2px;font-size:13px;color:#b7c6bf}
+.wtodo li.on:before{content:'\2714';color:#1f9d59}
+.wtodo li.on{color:#9aa8a2;text-decoration:line-through}
+.gfwrap{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.gfrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.gfrow>b{font-size:10px;color:#7b8883;width:52px;flex:none;font-weight:600}
+.gfchip{font-size:10.5px;padding:3px 9px;border-radius:99px;background:#f0f5f2;color:#7b8883;border:1px solid #e3ece7}
+.gfchip.s1{background:#eef5ff;color:#2b6ca3;border-color:#cfe0f5}
+.gfchip.s2{background:#e9f7ef;color:#1f8a4f;border-color:#bfe7d0}
 @media print{.tabs,.foot,.copybtn,.seg,.addrow,.legend{display:none!important;}
   body{background:#fff;padding:0;}.card{box-shadow:none;border:1px solid var(--line);}}
 </style>
@@ -206,7 +238,9 @@ button{font-family:inherit;cursor:pointer;}
   <div class="tabs">
     <button data-tab="day" class="on">📅 打卡</button>
     <button data-tab="mock">📈 模考</button>
+    <button data-tab="road">📅 路线</button>
     <button data-tab="week">📄 周复盘</button>
+    <button data-tab="rep">📚 周报</button>
   </div>
 
   <div id="tab-day">
@@ -250,6 +284,7 @@ button{font-family:inherit;cursor:pointer;}
     </div>
     <div class="foot">
       <button id="forceBtn">🔄 强制更新（还看到旧版就点它）</button>
+      <button id="exportBtn">⬇️ 导出数据备份（JSON）</button>
       <button id="reset">清空全部打卡记录</button>
       <div id="buildTxt" style="font-size:10.5px;color:#b3bfb9;margin-top:3px"></div>
     </div>
@@ -259,6 +294,7 @@ button{font-family:inherit;cursor:pointer;}
     <div class="seg" id="mockType">
       <button data-t="行测" class="on">📘 行测</button>
       <button data-t="职测">📗 职测</button>
+      <button data-t="文职公共课">🎖️ 文职</button>
     </div>
 
     <div class="card">
@@ -302,6 +338,35 @@ button{font-family:inherit;cursor:pointer;}
     </div>
   </div>
 
+  <div id="tab-road" style="display:none">
+    <div class="card">
+      <div class="ct">倒计时 <span class="p" id="roadNow"></span></div>
+      <div class="cdrow" id="cdRow"></div>
+    </div>
+    <div class="card">
+      <div class="ct">文职公共科目进度 <span class="p" id="gfTip"></span></div>
+      <div class="mgbar" id="gfBar"></div>
+      <div class="gfwrap" id="gfBox"></div>
+    </div>
+    <div class="card">
+      <div class="ct">管理学进度 <span class="p" id="mgTip"></span></div>
+      <div class="mgbar" id="mgBar"></div>
+      <div class="mgnames" id="mgNames"></div>
+    </div>
+    <div id="weekCards"></div>
+  </div>
+
+  <div id="tab-rep" style="display:none">
+    <div class="card">
+      <div class="ct">往期周报 <span class="p" id="repTip"></span></div>
+      <div class="addrow" style="margin-bottom:9px">
+        <button class="copybtn alt" id="repPrev" style="flex:1">◀ 上一期</button>
+        <button class="copybtn alt" id="repNext" style="flex:1">下一期 ▶</button>
+      </div>
+      <div id="repBody"><div class="empty">加载中…</div></div>
+    </div>
+  </div>
+
   <div id="tab-week" style="display:none">
     <div class="card">
       <div class="ct">上周复盘 <span class="p">刚结束的一周（周一 → 周日）</span></div>
@@ -336,14 +401,13 @@ button{font-family:inherit;cursor:pointer;}
     {id:'pol',  name:'📰 政治/常识'},
     {id:'data', name:'📊 资料分析'},
     {id:'tui',  name:'🧩 图推'},
-    {id:'num',  name:'🔢 数量·类型专项'},
-    {id:'yan',  name:'📝 言语逻辑'},
-    {id:'sl',   name:'✍️ 申论/综应'}
+    {id:'num',  name:'🔢 数量'},
+    {id:'sl',   name:'✍️ 申论/综应'},
+    {id:'mgmt', name:'📚 管理学 · 一章'},
+    {id:'gf',   name:'🎖️ 国防军队'}
   ];
   var SPECIAL={
-    0:[{id:'mock', name:'📊 模考'},{id:'mfix', name:'📝 模考订正'}],
-    1:[{id:'review', name:'📋 复盘整理'}],
-    2:[{id:'mock', name:'📊 模考'},{id:'mfix', name:'📝 模考订正'}]
+    1:[{id:'review', name:'📋 复盘整理'}]
   };
   var SPEC_ITEMS={
     mock:{id:'mock', name:'📊 模考'},
@@ -351,13 +415,13 @@ button{font-family:inherit;cursor:pointer;}
     review:{id:'review', name:'📋 复盘整理'},
     rest:{id:'rest', name:'🌴 休整日'}
   };
-  var LITE_DAYS=[0,2];
+  var LITE_DAYS=[];
   function isLite(day,r){
     if(r && r.liteOverride!==undefined) return !!r.liteOverride;
     return LITE_DAYS.indexOf(day)>-1;
   }
   function dailyFor(day,r){
-    if(isLite(day,r)) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'; });
+    if(isLite(day,r)) return DAILY.filter(function(d){ return d.id==='pol'||d.id==='sl'||d.id==='mgmt'; });
     return DAILY;
   }
   function dayKind(day,r){
@@ -367,11 +431,10 @@ button{font-family:inherit;cursor:pointer;}
         : {tip:'🧭 自定义日型 · 日常照常', lite:false, fixed:true};
     }
     if(day===1) return {tip:'📋 复盘日 · 日常照常，另加「复盘整理」'};
-    if(day===0||day===2) return {tip:'📊 模考日 · 日常只留 政治 / 申论，其余模块模考已覆盖',lite:true};
     return null;
   }
-  var EMO={pol:'📰',data:'📊',tui:'🧩',num:'🔢',yan:'📝',sl:'✍️',review:'📋',mock:'📊',mfix:'📝',rest:'🌴'};
-  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量专项',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正',rest:'休整日'};
+  var EMO={pol:'📰',data:'📊',tui:'🧩',num:'🔢',yan:'📝',sl:'✍️',review:'📋',mock:'📊',mfix:'📝',rest:'🌴',mgmt:'📚',gf:'🎖️'};
+  var LBL={pol:'政治常识',data:'资料',tui:'图推',num:'数量',yan:'言语',sl:'申论',review:'复盘整理',mock:'模考',mfix:'模考订正',rest:'休整日',mgmt:'管理学',gf:'国防军队'};
   var SYM=['⬜','✅','◐'];
 
   var MOCK_TYPES={
@@ -382,10 +445,15 @@ button{font-family:inherit;cursor:pointer;}
     '职测':{total:100,full:150,mods:[
       {k:'pol',n:'政治',q:5,p:1.5},{k:'cs',n:'常识',q:15,p:1.5},{k:'yan',n:'言语',q:25,p:1.4},
       {k:'num',n:'数量',q:5,p:1.8},{k:'tui',n:'图推',q:5,p:1.4},{k:'dy',n:'定义',q:10,p:1.5},
-      {k:'lb',n:'类比',q:10,p:1.4},{k:'lj',n:'逻辑',q:10,p:1.6},{k:'zl',n:'资料',q:15,p:1.6}]}
+      {k:'lb',n:'类比',q:10,p:1.4},{k:'lj',n:'逻辑',q:10,p:1.6},{k:'zl',n:'资料',q:15,p:1.6}]},
+    '文职公共课':{total:110,full:100,mods:[
+      {k:'wbj1',n:'基本·单选',q:50,p:0.5},{k:'wbj2',n:'基本·多选',q:4,p:1.5},{k:'wbj3',n:'基本·系列',q:6,p:1.5},
+      {k:'wyy',n:'言语',q:20,p:1},{k:'wsl',n:'数量',q:10,p:1.5},{k:'wpd',n:'判断',q:10,p:1.5},{k:'wzl',n:'资料',q:10,p:1}]}
   };
   var MCOL={pol:'#1f9d59',cs:'#3b82c4',yan:'#e0952a',num:'#d9534f',tui:'#8b5cf6',
-            dy:'#0ea5a4',lb:'#ec4899',lj:'#64748b',zl:'#84cc16'};
+            dy:'#0ea5a4',lb:'#ec4899',lj:'#64748b',zl:'#84cc16',
+            wbj1:'#1f9d59',wbj2:'#0f766e',wbj3:'#65a30d',
+            wyy:'#e0952a',wsl:'#d9534f',wpd:'#8b5cf6',wzl:'#84cc16'};
 
   var SEED={
     '2026-09-22':{states:{mock:1,sl:1},t1:{},t2:{},t3:{sl:'2'},focus:[{id:'sg22a',name:'逻辑/组合排列',state:2,t1:'',t2:'',t3:''}],custom:[]},
@@ -403,7 +471,10 @@ button{font-family:inherit;cursor:pointer;}
     {id:'sm5',date:'2026-09-19',type:'行测',total:'75.6',beat:null,mods:{pol:{r:'8',mm:'7',ss:''},cs:{r:'4',mm:'4',ss:''},yan:{r:'27',mm:'31',ss:''},num:{r:'8',mm:'12',ss:''},tui:{r:'4',mm:'10',ss:''},dy:{r:'10',mm:'9',ss:''},lb:{r:'5',mm:'2',ss:''},lj:{r:'9',mm:'15',ss:''},zl:{r:'15',mm:'27',ss:''}}},
     {id:'sm6',date:'2026-09-22',type:'职测',total:'117.9',beat:93.7,mods:{pol:{r:'3',mm:'2',ss:'15'},cs:{r:'7',mm:'7',ss:'41'},yan:{r:'20',mm:'22',ss:'42'},num:{r:'4',mm:'8',ss:'21'},tui:{r:'4',mm:'7',ss:'37'},dy:{r:'10',mm:'8',ss:'18'},lb:{r:'7',mm:'5',ss:'38'},lj:{r:'8',mm:'12',ss:'33'},zl:{r:'15',mm:'14',ss:'43'}}},
     {id:'sm7',date:'2026-09-27',type:'行测',total:'71.3',beat:93.8,mods:{pol:{r:'8',mm:'6',ss:'33'},cs:{r:'3',mm:'5',ss:'54'},yan:{r:'31',mm:'32',ss:'28'},num:{r:'2',mm:'11',ss:'21'},tui:{r:'4',mm:'10',ss:'5'},dy:{r:'8',mm:'9',ss:'14'},lb:{r:'5',mm:'2',ss:'13'},lj:{r:'8',mm:'11',ss:'37'},zl:{r:'16',mm:'30',ss:'10'}}},
-    {id:'sm8',date:'2026-10-04',type:'行测',total:'72.2',beat:94,mods:{pol:{r:'8',mm:'8',ss:'49'},cs:{r:'5',mm:'4',ss:'18'},yan:{r:'26',mm:'31',ss:'8'},num:{r:'4',mm:'14',ss:'26'},tui:{r:'4',mm:'6',ss:'45'},dy:{r:'8',mm:'9',ss:'8'},lb:{r:'5',mm:'2',ss:'36'},lj:{r:'8',mm:'11',ss:'56'},zl:{r:'18',mm:'25',ss:'32'}}}
+    {id:'sm8',date:'2026-10-04',type:'行测',total:'72.2',beat:94,mods:{pol:{r:'8',mm:'8',ss:'49'},cs:{r:'5',mm:'4',ss:'18'},yan:{r:'26',mm:'31',ss:'8'},num:{r:'4',mm:'14',ss:'26'},tui:{r:'4',mm:'6',ss:'45'},dy:{r:'8',mm:'9',ss:'8'},lb:{r:'5',mm:'2',ss:'36'},lj:{r:'8',mm:'11',ss:'56'},zl:{r:'18',mm:'25',ss:'32'}}},
+    {id:'sm11',date:'2026-10-11',type:'职测',total:'130',beat:null,mods:{pol:{r:'2',mm:'2'},cs:{r:'8',mm:'7'},yan:{r:'25',mm:'19'},num:{r:'3',mm:'8'},tui:{r:'4',mm:'9'},dy:{r:'10',mm:'8'},lb:{r:'9',mm:'5'},lj:{r:'9',mm:'9'},zl:{r:'15',mm:'12'}}},
+    {id:'sm9',date:'2026-10-13',type:'职测',total:'121.3',beat:null,mods:{pol:{r:'5'},cs:{r:'8'},yan:{r:'22'},num:{r:'4'},tui:{r:'4'},dy:{r:'8'},lb:{r:'9'},lj:{r:'9'},zl:{r:'12'}}},
+    {id:'sm10',date:'2026-10-15',type:'职测',total:'109',beat:null,mods:{pol:{r:'1',mm:'1'},cs:{r:'8',mm:'9'},yan:{r:'20',mm:'20'},num:{r:'2',mm:'6'},tui:{r:'4',mm:'5'},dy:{r:'7',mm:'8'},lb:{r:'9',mm:'11'},lj:{r:'10',mm:'11'},zl:{r:'13',mm:'18'}}}
   ];
 
   var store={};
@@ -440,7 +511,7 @@ button{font-family:inherit;cursor:pointer;}
     save();
   }
   function applyMockSeed(){
-    try{ if(localStorage.getItem(MKEY+'_seed4')==='1') return; }catch(e){return;}
+    try{ if(localStorage.getItem(MKEY+'_seed7')==='1') return; }catch(e){return;}
     SEED_MOCKS.forEach(function(m){
       var ex=mocks.filter(function(x){ return (x.date===m.date && x.type===m.type); })[0];
       if(!ex){ mocks.push(JSON.parse(JSON.stringify(m))); return; }
@@ -456,7 +527,7 @@ button{font-family:inherit;cursor:pointer;}
       });
     });
     dedupMocks();
-    try{ localStorage.setItem(MKEY+'_seed5','1'); }catch(e){}
+    try{ localStorage.setItem(MKEY+'_seed7','1'); }catch(e){}
     saveMocks();
   }
   function dedupMocks(){
@@ -994,7 +1065,7 @@ button{font-family:inherit;cursor:pointer;}
       h+='</table>';
     }
     var rep=''; try{ rep=localStorage.getItem(RKEY)||''; }catch(e){}
-    h+='<div class="sec">复盘正文 · '+a+'–'+b+'</div>'+(rep?('<div class="report">'+fmtReport(rep)+'</div>'):'<div class="weekstat">（这一周的复盘还没推送过来）</div>');
+    h+='<div class="sec">完整周报</div><div class="weekstat">→ 见第 5 个标签「📚 周报」（可翻看全部往期）</div>';
     h+='<div style="text-align:center;font-size:10.5px;color:#b3bfb9;margin-top:12px">构建 '+BUILD+'</div>';
     document.getElementById('weekReport').innerHTML=h;
   }
@@ -1093,12 +1164,61 @@ button{font-family:inherit;cursor:pointer;}
       }
       if(!payload) return;
       try{ localStorage.setItem(RKEY,payload); }catch(e){}
+      try{ repAdd(payload); }catch(e){}
       if(document.getElementById('tab-week').style.display!=='none') weekReport();
     })['catch'](function(){});
   }
 
   /* ================= 看板导出（① 打卡 ② 模考 ③ 周复盘） ================= */
   function reportMd(){ try{ return localStorage.getItem(RKEY)||''; }catch(e){ return ''; } }
+  /* ============ 周报存档 ============ */
+  var RPKEY='kaogong_reports_v1';
+  var reps={}; try{reps=JSON.parse(localStorage.getItem(RPKEY)||'{}')||{};}catch(e){reps={};}
+  var CURREP=null;
+  var SEED_RPS=[
+"# 备考周报（9/2-9/6）\n\n> 周报期间：2026年9月2日-9月6日\n> 首份周报\n\n***\n\n## 一、模考成绩（本周最大亮点）\n\n| **模考**          | **总分**        | **正确率** | **备注**     |\n| --------------- | ------------- | ------- | ---------- |\n| 省考行测（8月底做，本周分析） | 95.5/150      | 61.7%   | 基线         |\n| **职测模考（9/6）**   | **119.2/150** | **80%** | 🎉 击败96.7% |\n\n**进步**：正确率 61.7%→80%（跨卷对比仅供参考）\n\n***\n\n## 二、各模块一周数据\n\n### 图推（每日20题）\n\n| **日期** | **正确率** | **备注**       |\n| ------ | ------- | ------------ |\n| 9/3    | 75%     | 错5：旋转/翻转+曲直性 |\n| 9/4    | **95%** | 仅错1（图形语义干扰）  |\n| 9/5    | 75%     | ​            |\n| 9/6    | 80%     | +点规律专项全对 ✅   |\n\n周均约81%。薄弱点：位置规律（旋转/翻转）、被图形语义带跑。\n\n### 判断推理小循环\n\n| **模块** | **本周表现**               | **趋势**  |\n| ------ | ---------------------- | ------- |\n| 类比     | 70%→60%→**86.7%**（30题） | 🚀 弱项转强 |\n| 逻辑     | **87.9%**（33题）         | 🟢 强项稳定 |\n| 定义     | 80%→**84%**（25题）       | 🟢 持续进步 |\n\n核心策略验证：类比\"降速保正确率\"（30→36秒/题）见效。\n\n### 言语\n\n* 逻辑填空 76%（9/4）\n* 排序 85% 但偏慢（9/5）\n* **模考言语 92%**（9/6）🟢\n\n### 资料分析\n\n* 专项：16/20（效率1.04）、19/20（**效率1.27**）🟢 很强\n* **但模考仅73%（效率0.84）**⚠️ 专项vs实战有落差\n\n### 数量关系\n\n| **项目** | **数据**                           |\n| ------ | -------------------------------- |\n| 排列组合毕业 | 9/2（80%）✅                        |\n| 最值Day1 | 20对15（75%）                       |\n| 最值Day2 | 10对3 ⚠️ 崩                        |\n| 保温     | 工程90%、几何80%、**和差倍比100%**、排列组合70% |\n\n最值诊断：混合题超范围，需分支逐个学（先补抽屉原理等）。\n\n### 申论/综应\n\n* 综应A跟课2小节，建立题型框架\n* 明确\"应用文/公文\"为核心技能（一鱼三吃）\n\n***\n\n## 三、本周关键事件\n\n1. 🏆 职测模考119.2分大突破\n2. 🚀 判断推理整体转强（类比86.7%/逻辑88%/定义84%）\n3. 📐 mn错题系统方案定型（含粉笔分流策略）\n4. 🗺️ 半年备考总框架 + \"考公\"笔记本体系建立\n5. ⚠️ 最值Day2暴露\"综合题超范围\"问题（方法修正：分支逐个学）\n\n***\n\n## 四、下周重点\n\n| **优先级** | **事项**                |\n| ------- | --------------------- |\n| 🥇      | 落地mn错题系统              |\n| 🥈      | 最值补分支（抽屉原理等），不碰综合题    |\n| 🥉      | 资料分析：专项强模考弱，限时套题找落差原因 |\n| 4       | 言语积累本启用 + 综应跟课推进      |",
+"# 备考周报（9/8-9/13）\n\n> 周期：2026年9月8日-9月13日\n> 第2份周报\n\n***\n\n## 一、模考成绩（本周亮点）\n\n| **模考** | **日期** | **总分**        | **击败比**   |\n| ------ | ------ | ------------- | --------- |\n| 职测模考   | 9/13   | **124.9/150** | **98.2%** |\n\n> 职测从上次119.2→124.9（+5.7）；击败比96.7%→98.2%\n\n**附·新周开局（9/14）**：省考行测模考 **114.5/150**（较8月底+19分 🚀）\n\n***\n\n## 二、各模块一周表现\n\n### 判断推理（本周重点突破）\n\n| **模块** | **成绩**    | **备注**               |\n| ------ | --------- | -------------------- |\n| 定义判断   | **95.8%** | 🎉 历史新高（模考70%→95.8%） |\n| 逻辑判断   | 85-100%   | 强项，多次满分              |\n| 类比推理   | 70%       | 波动（遇常识古诗词类偏难）        |\n| 图推     | 80-95%    | 稳定高位，痛点转强项           |\n\n**判断专项训练**：位置规律86%、数量规律81.5%、属性规律72.4%、黑白块53.8%（待补）、翻译推理83.3%、真假推理58.8%（待补）\n\n### 言语\n\n* 中心理解：80% → 76.7%\n* 逻辑填空：73.3%（60题累计）\n* 排序：85%\n\n### 资料分析\n\n* 多次专项：80-90%（效率1.0+）\n* ⚠️ 速度偏慢（22-32min/20题），用书为花生600题（高难度）\n\n### 数量关系\n\n* 温热保温：工程80%、几何70%、和差倍比100%、排列组合70%\n* 最值：80%（认知修正：抽屉原理=最不利构造，已学过）\n\n***\n\n## 三、本周关键事件\n\n1. 🏆 职测模考124.9（击败98.2%），创新高\n2. 🚀 图推\"黑洞\"彻底扭转（模考20%→80%）\n3. 🎉 定义判断达95.8%（历史最高）\n4. 📐 建立mn错题系统 + 三张记录表体系\n5. 🔍 暴露弱区：黑白块53.8%、真假推理58.8%、政治40%\n6. 📋 计划机制：政治时政纳入每日、组合分析设止损线\n\n***\n\n## 四、下周重点\n\n| **优先级** | **事项**          | **理由**      |\n| ------- | --------------- | ----------- |\n| 🥇      | 必然性推理（翻译/真假/分析） | 本周暴露的集中弱区   |\n| 🥈      | 言语提速            | 35题用33min偏慢 |\n| 🥉      | 黑白块专项           | 53.8%，已备详解  |\n| 4       | 政治时政积累          | 已启动，坚持      |\n| 5       | 数量：行程问题         | 按计划推进       |\n\n***\n\n## 五、情绪与状态\n\n* 9/10 状态低谷（资料60%），当天及时调整（做顺风模块找手感）\n* 整体呈\"波动中上行\"，模考成绩印证训练有效\n* 提醒：备考是持久战，状态起伏正常，重点是别让单日数据否定长期进步",
+"# 备考周报（9/14-9/20）\n\n> 周期：2026年9月14日-9月20日\n> 第3份周报\n\n***\n\n## 一、模考成绩\n\n| **模考** | **日期** | **正确率** | **得分率** |\n| ------ | ------ | ------- | ------- |\n| 行测（省考） | 9/14   | 75.8%   | 76.3%   |\n| 行测（粉笔） | 9/19   | 75%     | 75.6%   |\n\n> 9/14较8月底（61.7%）大幅提升；9/19为感冒恢复期，与上次基本持平\n\n***\n\n## 二、本周突破\n\n### 🎉 黑白块：53.8% → 90%\n\n\"先学方法（规律详解）+ 按检索表刷题\"策略成功\n\n### 🎉 类比推理：95%（40题大样本）\n\n此前70-87%波动，现已又快又准（25.5秒/题）\n\n### ✅ 达标退役（转入轮换池）\n\n* 数量规律 86.7%\n* 语句排序 100%\n* 真假推理 58.8%→80%\n\n### 📈 判断推理模考93%（新高）\n\n***\n\n## 三、各模块状态\n\n| **模块** | **状态**               |\n| ------ | -------------------- |\n| 资料分析   | 🟢 稳（90%，速度提升）       |\n| 类比     | 🟢 95% 达标            |\n| 数量     | 🟢 板块学习见效（模考80%）     |\n| 判断     | 🟢 模考93% 最强项         |\n| 言语     | 🟡 中心理解\\~77%、逻辑填空73% |\n| 图推     | 🟡 专项90% 但混刷68.75%   |\n| 政治/常识  | 🔴 模考40-53%，需积累      |\n\n***\n\n## 四、关键发现\n\n1. **图推瓶颈在\"规律识别\"**：混刷68.75% \\<\\< 专项90% → 不是规律不会，是\"拿到题不知往哪想\"\n2. **政治/常识是最大洼地**：靠每日积累，需坚持\n3. **概念突破**：主攻+轮换节奏跑通；答题顺序确定\n\n***\n\n## 五、系统建设\n\n* 建立「主攻·轮换排期表」（含任务优先级）\n* 建立「行测/职测模考趋势表」（跨次对比）\n* 确定答题顺序：资料→判断→政治→常识→言语→数量\n\n***\n\n## 六、下周重点\n\n| **优先级** | **事项**                |\n| ------- | --------------------- |\n| 🥇      | 申论/综应（最紧迫，10/17）      |\n| 🥈      | 主攻：组合排列 → 立体图推 → 政治理论 |\n| 🥉      | 图推\"规律识别\"练习            |\n| 4       | 数量新板块：行程问题            |\n| 5       | 政治/常识每日积累             |\n\n***\n\n## 七、健康与状态\n\n⚠️ 9/17下午-9/19 感冒休息（约2.5天）。恢复期勿急于满负荷；模考排序作业顺延。",
+"# 备考周报（9/21-9/27）\n\n周期：2026年9月21日-9月27日　第4份周报\n\n## 一、模考成绩\n\n| **模考**   | **日期** | **总分**    | **击败比** |\n| -------- | ------ | --------- | ------- |\n| 职测（事业单位） | 9/22   | 117.9/150 | 93.7%   |\n| 行测（省考）   | 9/27   | 71.3/100  | 93.8%   |\n\n两次都较上次回落：职测 124.9→117.9（-7.0）；行测 75.6→71.3（-4.3）。\n\n行测正确率三连降：75.8%（9/14）→ 75%（9/19）→ 70.8%（9/27）。\n\n但击败比两场都稳在 93%+——**绝对位次没掉，掉的是本卷的适应度**。\n\n## 二、本周主线\n\n**🎯 攻克推进**\n\n* 9/22 逻辑/组合排列（半完成）\n* 9/23 立体图推首攻 → 9/24 收尾\n* 9/26 政治理论（首攻，属持续积累类）\n\n**📝 申论保持**连续 6 天（9/21–9/26）每天动笔，未断档。申论是当前最高优先级（10/17）。\n\n**🧩 图推日练**每天 20 题，正确率 80–85%。\n\n## 三、各模块状态\n\n| **模块** | **状态**                                                       |\n| ------ | ------------------------------------------------------------ |\n| 资料分析   | 🟢 稳定 85–90%；但 9/27 模考 20 题用 30min，速度是短板                     |\n| 图推     | 🟡 正确率 80% 尚可，**耗时不可控**（9/27 五题 10min）→ 问题性质已从\"正确率\"转为\"速度+纪律\" |\n| 言语     | 🟢 9/27 模考 31/35（89%），历史最好                                   |\n| 逻辑     | 🟡 9/25 套题 53%；模考 8/10（80%）                                  |\n| 类比     | 🟢 稳定满分                                                      |\n| 数量     | 🔴 9/24 起加入日练，但 9/25、9/26 连续未做；模考 8/10→2/10 暴跌               |\n| 政治     | 🟡 模考 8/15（53%）持平；9/26 起纳入攻克                                 |\n| 常识     | 🔴 模考 3/10（30%），最大洼地                                         |\n\n## 四、关键发现\n\n**1. 数量是本周最大变数。** 模考从 9/19 的 8/10 掉到 2/10，主因判断为卷面撞上未学板块（行程/经济利润），而非能力退步 → 混合题应只看\"已学板块\"的得分率。\n\n**2. 图推的问题换了个性质。** 正确率 80% 不差，但单题耗时约 2 分钟，开局被吃掉 10 分钟，直接拖垮全卷节奏。\n\n**3. 常识/政治仍是洼地。** 常识 30%、政治 53%，靠每日碎片积累，是最容易被挤掉的一环。\n\n**4. 模考的\"绝对位次\"没掉（击败比 93%+），掉的是本卷适应度。**\n\n## 五、系统建设（本周最大收获）\n\n* **打卡表大升级**：上云托管（可添加到桌面、支持离线）、新增模考表（录入 → 效率表 → 总分趋势图 / 各模块效率趋势图）、周复盘 Tab\n* **日型模板**：模考日、复盘日自动精简日常项，避免\"模考完还要刷全套\"的重复堆量\n* **计划自动同步**：AI 排好次日计划直接写入表内，不再手动粘贴\n* **行测答题顺序定案**：判断开局 + 判断内部\"图推压轴\" + 图推时间盒（5 题 ≤6min、单题 70 秒封顶、超时即跳）\n\n## 六、下周重点\n\n| **优先级** | **事项**                    |\n| ------- | ------------------------- |\n| 🥇      | 综应/申论（10/17 最紧迫）          |\n| 🥈      | 新答题顺序实战检验（9/29、10/4 两场模考） |\n| 🥉      | 数量未学板块：行程 → 经济利润          |\n| 4       | 资料提速（≤25min）+ 图推时间盒落地     |\n| 5       | 政治/常识每日积累（政治 9/26 已启动，别断） |\n\n## 七、状态说明\n\n9/27 晚起因个人事务状态波动，9/28（复盘日）学习暂停一天，计划顺延；本周其余日程正常，无健康问题。",
+"# 备考周报（9/28-10/4）\n\n周期：2026年9月28日-10月4日　第5份周报\n\n## 一、模考成绩\n\n| **模考**     | **日期** | **总分**   | **正确率**       | **击败比** | **总用时** |\n| ---------- | ------ | -------- | ------------- | ------- | ------- |\n| 行测（粉笔第29季） | 10/4   | 72.2/100 | 71.7%（86/120） | 94%     | 114′    |\n\n**对比 9/27**（71.3 / 70.8% / 93.8% / 119.6′）：总分 **+0.9**、正确率 **+0.9pt**、**用时 -5.6 分钟**。\n\n> 备注：本周第一场（9/29 周二）模考顺延，实际只考一场；难度 4.5、平均分 55.9、最高分 80.2。\n\n## 二、分模块对比（10/4 vs 9/27）\n\n| **模块** | **9/27**             | **10/4**           | **走向**     |\n| ------ | -------------------- | ------------------ | ---------- |\n| 政治     | 8/15（53%）            | 8/15（53%）          | 持平         |\n| 常识     | 3/10（30%）            | 5/10（50%）          | ↑          |\n| 言语     | 31/35（89%）           | 26/35（**74%**）     | ↓↓         |\n| 数量     | 2/10（20%）            | 4/10（40%）          | ↑          |\n| 图推     | 4/5，10′05″           | 4/5，**6′45″**      | **提速 33%** |\n| 定义     | 8/10，9′14″           | 8/10，9′08″         | 持平         |\n| 类比     | 5/5，2′13″            | 5/5，2′36″          | 持平         |\n| 逻辑     | 8/10，11′37″          | 8/10，11′56″        | 持平         |\n| 资料     | 16/20（80%），30′10″    | **18/20（90%），25′** | **↑↑**     |\n| **合计** | 85/120（70.8%），119.6′ | 86/120（71.7%），114′ | 微升         |\n\n## 三、本周两个实验——都成立\n\n### ✅ 实验一：图推压轴（B 方案首测）\n\n新顺序：**判断开局（定义→类比→逻辑→图推）→ 资料 → 政治 → 常识 → 言语 → 数量**\n\n图推用时 **10′05″ → 6′45″（121 秒/题 → 81 秒/题）**，正确率不变（4/5）。\n\n整个判断推理模块：33′09″ → 30′25″。\n\n⚠️ 尚未达标：目标是 5 题 ≤6 分钟，实际 6′45″，超 45 秒 → 下一版把单题封顶严格执行（70 秒到点跳）。\n\n### ✅ 实验二：资料压时\n\n目标\"≤25 分钟\"→ 实际 **25′**，且正确率 80% → **90%**。后续 10/5 单篇练习进一步压到 23′。\n\n## 四、各模块状态\n\n| **模块**       | **状态**                                                          |\n| ------------ | --------------------------------------------------------------- |\n| 资料分析         | 🟢 本周最亮：25′ + 90%，速度与正确率双改善                                     |\n| 图推           | 🟡 提速见效；\"文字类\"是明确盲区（10/5 专项仅 53%，全是\"没想到规律\"）                      |\n| 逻辑 / 定义 / 类比 | 🟢 稳定（各 80–100%）                                                |\n| 常识           | 🟡 30% → 50%，有回升，仍是洼地                                           |\n| 政治           | 🟡 模考 53% 持平；本周未系统推进                                            |\n| 数量           | 🟡 模考 20% → 40%；已确认核心问题是\"学过但调不出来\"                               |\n| 言语           | 🔴 89% → 74%，本周唯一滑坡，待查因                                         |\n| 申论           | ⚠️ 本周仅 3 道（10/1 一道、10/4 两道），较上周 6 道下降——**它是 10/17 前最高优先级，需要保量** |\n\n## 五、关键发现\n\n**1. 数量的问题被定性了：不是\"没学\"，是\"调不出来\"。**&#x8BC1;据：单类型练习 60–87%，混合卷面 20–40%。且**经济利润已学过两遍**（10/5 专项 13/15），故它归\"A 该会未会\"，不归\"C 未学\"——**\"待攻新板块\"只剩「行程」一个**。\n\n**2. 图推文字类 = 检索问题，不是能力问题。**&#x9519;的题\"完全没想到规律\"，与 9/20 的发现（混刷 68.75% \\<\\< 专项 90%）完全一致。对策：**三步检索表 + 按清单扫，不复述、只使用**。\n\n**3. 言语 74% 是本周唯一的大滑坡**（-5 题），需在订正里区分\"逻辑填空 / 中心理解\"。\n\n**4. 方法改进的收益，明显大于加量的收益。**&#x672C;周两个实验（图推压轴、资料压时）都只改了\"做法\"，没加题量，但都见效。\n\n## 六、系统建设\n\n* **打卡表**：新增\"顺延开关\"（我可远程隐藏某日模考/订正/复盘）与\"休整日\"（整日清空任务）；日常项\"数量关系\"改为\"**数量·类型专项**\"\n* **新建「数量·类型追踪表」**：A 该会未会 / B 会但慢 / C 未学 / D 粗心 四类记账法 + 待清清单\n* **图推三步检索表**（位置→属性→数量；文字类单列一套）\n\n## 七、下周重点（10/5-10/11）\n\n| **优先级** | **事项**                                                  |\n| ------- | ------------------------------------------------------- |\n| 🥇      | **申论保量**（本周只 3 道，需回到每天 1 道；10/17 最紧迫）                   |\n| 🥈      | **图推检索表实战**（每天 20 题带着清单做，标\"考第几步\"）                       |\n| 🥉      | **数量 A 类清单**：和差倍比（70%，未达标）→ 平面几何 / 年龄 / 等差；行程（唯一未学板块）排后 |\n| 4       | **言语查因**：把掉的 5 题分\"逻辑填空 / 中心理解\"                          |\n| 5       | **资料保持**（已成模块优势，每周 2–3 篇即可）                             |\n| 6       | 图推时间盒落地：单题 70 秒封顶，5 题 ≤6 分钟                             |\n\n## 八、状态说明\n\n9/28 因个人事务暂停一天；10/3 返程＋参加婚礼。其余日程正常。**本周睡眠偏少（10/5 仅 4–5 小时），10/5 起需注意作息与身体状态（小腿皮疹未就诊）。**",
+"# 周复盘 10/12–10/18 · 事业编冲刺与实考\n\n## 一、这一周做了什么\n* 10/13 纸质职测全真：89′，81/100（121.3/150）—— 首次实战练涂卡\n* 10/14 综应日：写倡议书、整理通知格式\n* 10/15 全真彩排：职测 89′（73%）＋ 综应 115′（2025 联考真题，91/150）\n* 10/17 **事业编实考**：职测 **82/100**，综应待出分\n\n## 二、数据\n* 职测同口径：纸质 80% → 81% → **实考 82%**，稳中有升\n* **资料分析 15/15**，第 4 次满分\n* **政治常识 70%**（10/15 曾跌到 20%，这次回来了）\n* 逻辑 7/10、数量只做 2 题 —— **折损全在这两块**\n\n## 三、暴露的三件事\n* **“平时会做、考场空白”** —— 应激占内存，不是不会\n* **数量不设硬窗就会僵住** —— 怕超时连题都不敢做\n* **综应小题要点不全（B）** 仍是主失分；应用文已达标（84%）\n\n## 四、下周（10/19–10/25）\n* 管理学 **第 1–6 章**，每天一章（导图＋客观题30）\n* 行测保温：资料 20｜图推 10–20｜数量 5–10｜言语限时\n* 申论或综应 **2 题**\n* 国防军队 **2h**\n* **国考报名 10/21 前提交**（注册认证 10/23 截止）\n\n## 五、一句\n* **80% 是下沿，不是天花板。想往上推，靠“高压下的稳定性”，不是再多学一点。**"
+  ];
+  SEED_RPS.forEach(function(t){ try{ repAdd(t); }catch(e){} });
+
+  function saveReps(){ try{localStorage.setItem(RPKEY,JSON.stringify(reps));}catch(e){} }
+  function repParse(txt){
+    var m=String(txt||'').match(/(\d{1,2})\/(\d{1,2})\s*[\u2013\u2014\-~]\s*(\d{1,2})\/(\d{1,2})/);
+    if(!m) return null;
+    return {k:(+m[1])+'/'+(+m[2])+'\u2013'+(+m[3])+'/'+(+m[4]), e:(+m[3])*100+(+m[4])};
+  }
+  function repAdd(txt){
+    var p=repParse(txt); if(!p) return null;
+    var old=reps[p.k];
+    if(old && old.t && old.t.length >= String(txt).trim().length) return p.k;
+    reps[p.k]={t:String(txt).trim(), e:p.e}; saveReps(); return p.k;
+  }
+  function repSorted(){
+    return Object.keys(reps).map(function(k){ return {k:k,t:reps[k].t,e:reps[k].e}; })
+      .sort(function(a,b){ return a.e-b.e; });
+  }
+  function renderRep(){
+    var arr=repSorted();
+    var box=document.getElementById('repBody'), tip=document.getElementById('repTip');
+    if(!arr.length){ if(box) box.innerHTML='<div class="empty">还没有周报</div>'; if(tip) tip.textContent=''; return; }
+    var idx=arr.length-1;
+    if(CURREP){ for(var i=0;i<arr.length;i++){ if(arr[i].k===CURREP){ idx=i; break; } } }
+    CURREP=arr[idx].k;
+    if(tip) tip.textContent='第 '+(idx+1)+' / '+arr.length+' 期 · '+arr[idx].k;
+    if(box) box.innerHTML='<div class="report">'+fmtReport(arr[idx].t)+'</div>';
+  }
+  function repStep(dir){
+    var arr=repSorted(); if(!arr.length) return;
+    var idx=arr.length-1;
+    for(var i=0;i<arr.length;i++){ if(arr[i].k===CURREP){ idx=i; break; } }
+    idx=Math.max(0,Math.min(arr.length-1,idx+dir));
+    CURREP=arr[idx].k; renderRep();
+  }
+
   function fmtNow(){ var d=new Date(); return (d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
   function ymdCN(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
   function weekAggOf(ms0){
@@ -1297,7 +1417,158 @@ button{font-family:inherit;cursor:pointer;}
     else fb();
   }
 
-  var BUILD='2026-10-07 21:45';
+  /* ============ 路线 ============ */
+  var RKEY2='kaogong_road_v1';
+  var rdone={}; try{rdone=JSON.parse(localStorage.getItem(RKEY2)||'{}')||{};}catch(e){rdone={};}
+  function saveRoad(){ try{localStorage.setItem(RKEY2,JSON.stringify(rdone));}catch(e){} }
+
+  var GKEY='kaogong_gf_v1';
+  var gfs={}; try{gfs=JSON.parse(localStorage.getItem(GKEY)||'{}')||{};}catch(e){gfs={};}
+  var GFMODS=[{k:'b1',n:'马理论'},{k:'b2',n:'人文社会'},{k:'b3',n:'国防军队'},{k:'b4',n:'时政'},
+              {k:'k1',n:'言语'},{k:'k2',n:'数量'},{k:'k3',n:'判断'},{k:'k4',n:'资料'}];
+
+  var MG=[{n:'管理基础',c:5},{n:'组织行为',c:4},{n:'人力资源',c:6},{n:'公共事业',c:3},
+          {n:'行政伦理',c:5},{n:'公文写作',c:2},{n:'管理写作',c:2}];
+
+  var ROAD=[
+   {w:'W1',a:'2026-10-19',b:'2026-10-25',ph:1,tag:'打底期',
+    ch:'管理学 第1–6章｜概述·决策·组织·领导·控制·组织行为学概述',
+    todo:['管理学 10/20–10/25 每天一章（共 6 章）','每章：手画导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
+   {w:'W2',a:'2026-10-26',b:'2026-11-01',ph:1,tag:'打底期',
+    ch:'管理学 第7–13章｜个体行为·群体行为·组织行为·人力概述·人力规划·招聘·配置流动',
+    todo:['管理学 每天一章（共 7 章）','每章：导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
+   {w:'W3',a:'2026-11-02',b:'2026-11-08',ph:1,tag:'打底期',
+    ch:'管理学 第14–20章｜培训开发·绩效薪酬·公共事业概述·分类管理·危机管理·伦理概述·伦理规范',
+    todo:['管理学 每天一章（共 7 章）','每章：导图 ＋ 客观题 30 道','行测保温 每天','申论/综应 2 题','国防军队 2h']},
+   {w:'W4',a:'2026-11-09',b:'2026-11-15',ph:1,tag:'打底期·第一轮完',
+    ch:'管理学 第21–27章｜行政纪律·忠诚责任正义·伦理监督·公文概述·法定公文·管理写作·作文思路',
+    todo:['管理学 每天一章（共 7 章，11/15 收尾）','10 类法定公文过一遍','手写公文 1 篇（通知）','行测保温 每天','国防军队 2h']},
+   {w:'W5',a:'2026-11-16',b:'2026-11-22',ph:2,tag:'二轮·刷题',
+    ch:'管理学二轮｜第1篇 管理学基础 ＋ 第2篇 组织行为学 客观题二刷',
+    todo:['第1、2篇 客观题全部二刷','错题回看导图（只补红笔处）','论述题：列 1 篇提纲（不写全文）','行测保温 每天','文职公共科真题 1 套']},
+   {w:'W6',a:'2026-11-23',b:'2026-11-29',ph:2,tag:'二轮·国考周',
+    ch:'管理学二轮｜第3–7篇 客观题二刷 ＋ 写作题入门',
+    todo:['第3–7篇 客观题全部二刷','论述题：手写 1 篇 1000 字（限时 60′）','11/29 国考：按 10/17 的时间表执行','考完不对答案，第二天转文职']},
+   {w:'W7',a:'2026-11-30',b:'2026-12-06',ph:3,tag:'文职冲刺',
+    ch:'管理学三轮｜27 章错题回看 ＋ 公文 ＋ 论述题',
+    todo:['27 章错题本过一遍','公文：手写 1 篇（报告或请示）','论述题：手写 1 篇 1000 字','文职公共科真题 1 套（按真实时间）','国防军队：军队人才网时政专章']},
+   {w:'W8',a:'2026-12-07',b:'2026-12-13',ph:3,tag:'文职冲刺·最后一周',
+    ch:'冲刺｜框架为主，不碰新内容',
+    todo:['论述题：手写 1 篇 1000 字','公文：手写 1 篇（通知）','文职公共科真题 1 套','只看 7 张篇导图 ＋ 大纲目录','考前 2 天不写新题，只默框架']}
+  ];
+
+  function d2(d){ return new Date(d+'T00:00:00'); }
+  function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+
+  /* 管理学已过章数：按打卡里「📚 管理学」打勾的天数累计 */
+  function mgmtPassed(){
+    var n=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
+    while(d<=end){
+      var r=store[ymd(d)];
+      if(r && r.states && r.states.mgmt) n++;
+      d.setDate(d.getDate()+1);
+    }
+    return n>27?27:n;
+  }
+
+  function gfRender(){
+    var done=0;
+    GFMODS.forEach(function(m){ done+=(gfs[m.k]||0); });
+    var bar='';
+    GFMODS.forEach(function(m){
+      var st=gfs[m.k]||0;
+      bar+='<span style="display:flex;flex:1;gap:2px"><i class="'+(st>=2?'done':'')+'" style="flex:1"></i></span>';
+    });
+    var gb=document.getElementById('gfBar'); if(gb) gb.innerHTML=bar;
+
+    function chip(m){
+      var st=gfs[m.k]||0;
+      var mark=['○','◐','✔'][st];
+      return '<span class="gfchip s'+st+'" data-g="'+m.k+'">'+mark+' '+m.n+'</span>';
+    }
+    var box=document.getElementById('gfBox');
+    if(box){
+      box.innerHTML='<div class="gfrow"><b>基本知识</b>'+GFMODS.slice(0,4).map(chip).join('')+'</div>'+
+                    '<div class="gfrow"><b>岗位能力</b>'+GFMODS.slice(4).map(chip).join('')+'</div>';
+      box.querySelectorAll('.gfchip').forEach(function(c){
+        c.addEventListener('click',function(){
+          var k=c.getAttribute('data-g');
+          gfs[k]=((gfs[k]||0)+1)%3;
+          try{localStorage.setItem(GKEY,JSON.stringify(gfs));}catch(e){}
+          gfRender();
+        });
+      });
+    }
+    var nMock=0; mocks.forEach(function(m){ if(m.type==='文职公共课') nMock++; });
+    var t=document.getElementById('gfTip');
+    if(t) t.textContent='过一遍 '+done+' / 16 ｜ 文职真题 '+(nMock||0)+' 套';
+  }
+
+  function renderRoad(){
+    var today=new Date(); today.setHours(0,0,0,0);
+    var marks=[{n:'国考笔试',d:d2('2026-11-29')},{n:'文职笔试',d:d2('2026-12-13')},{n:'省考(约)',d:d2('2027-03-20')}];
+    var cd='';
+    marks.forEach(function(x){
+      var dd=daysBetween(today,x.d);
+      cd+='<div><b>'+(dd>=0?dd:'—')+'</b><span>'+x.n+'</span></div>';
+    });
+    document.getElementById('cdRow').innerHTML=cd;
+
+    var passed=mgmtPassed();
+    var off=0,bar='',names='';
+    MG.forEach(function(m){
+      var d=Math.max(0,Math.min(m.c,passed-off));
+      var seg='';
+      if(d>=m.c) seg='<i class="done" style="flex:'+m.c+'"></i>';
+      else if(d<=0) seg='<i style="flex:'+m.c+'"></i>';
+      else seg='<i class="done" style="flex:'+d+'"></i><i style="flex:'+(m.c-d)+'"></i>';
+      bar+='<span style="display:flex;flex:'+m.c+';gap:2px">'+seg+'</span>';
+      names+='<span>'+(d===m.c?'✅ ':(d>0?'◐ ':'○ '))+m.n+' '+d+'/'+m.c+'</span>';
+      off+=m.c;
+    });
+    var mb=document.getElementById('mgBar'); if(mb) mb.innerHTML=bar;
+    var mn=document.getElementById('mgNames'); if(mn) mn.innerHTML=names;
+    var tip=document.getElementById('mgTip');
+    if(tip) tip.textContent='已过 '+passed+' / 27 章（按打卡天数计）';
+
+    var now='';
+    for(var i=0;i<ROAD.length;i++){
+      if(daysBetween(today,d2(ROAD[i].a))<=0 && daysBetween(today,d2(ROAD[i].b))>=0){ now=ROAD[i].tag+' · '+ROAD[i].w; break; }
+    }
+    if(!now){ now = daysBetween(today,d2('2026-10-19'))<0 ? '未开始' : '计划已结束'; }
+    var rn=document.getElementById('roadNow'); if(rn) rn.textContent=now;
+
+    var h='';
+    ROAD.forEach(function(r){
+      var s0=d2(r.a), s1=d2(r.b), cls='p'+r.ph, st='';
+      if(daysBetween(today,s1)<0){ cls+=' past'; st='已过'; }
+      else if(daysBetween(today,s0)<=0 && daysBetween(today,s1)>=0){ cls+=' cur'; st='本周'; }
+      var t='';
+      r.todo.forEach(function(x,ti){
+        var k=r.w+'_'+ti;
+        t+='<li data-k="'+k+'" class="'+(rdone[k]?'on':'')+'">'+x+'</li>';
+      });
+      h+='<div class="wcard '+cls+'">'+
+         '<div class="whd"><b>'+r.w+'<span class="wtag">'+r.tag+'</span>'+(st?' <span class="wtag">'+st+'</span>':'')+'</b>'+
+         '<em>'+r.a.slice(5).replace('-','/')+' – '+r.b.slice(5).replace('-','/')+'</em></div>'+
+         '<div class="wch">'+r.ch+'</div>'+
+         '<ul class="wtodo">'+t+'</ul></div>';
+    });
+    var wc=document.getElementById('weekCards');
+    if(wc){
+      wc.innerHTML=h;
+      wc.querySelectorAll('.wtodo li').forEach(function(li){
+        li.addEventListener('click',function(){
+          var k=li.getAttribute('data-k');
+          if(rdone[k]) delete rdone[k]; else rdone[k]=1;
+          saveRoad(); li.classList.toggle('on');
+        });
+      });
+    }
+    gfRender();
+  }
+
+  var BUILD='2026-10-20 18:45';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
     var jobs=[];
@@ -1314,9 +1585,13 @@ button{font-family:inherit;cursor:pointer;}
       var t=b.getAttribute('data-tab');
       document.getElementById('tab-day').style.display=(t==='day'?'':'none');
       document.getElementById('tab-mock').style.display=(t==='mock'?'':'none');
+      document.getElementById('tab-road').style.display=(t==='road'?'':'none');
       document.getElementById('tab-week').style.display=(t==='week'?'':'none');
+      document.getElementById('tab-rep').style.display=(t==='rep'?'':'none');
       if(t==='mock'){ renderMockRows(); renderMockList(); renderCharts(); }
       if(t==='week'){ weekReport(); }
+      if(t==='road'){ renderRoad(); }
+      if(t==='rep'){ renderRep(); }
       window.scrollTo(0,0);
     });
   });
@@ -1335,6 +1610,27 @@ button{font-family:inherit;cursor:pointer;}
   document.getElementById('imgPrint').addEventListener('click',printBoard);
   document.getElementById('imgClose').addEventListener('click',hideBoard);
   document.getElementById('imgModal').addEventListener('click',function(ev){ if(ev.target.id==='imgModal') hideBoard(); });
+  document.getElementById('repPrev').addEventListener('click',function(){ repStep(-1); });
+  document.getElementById('repNext').addEventListener('click',function(){ repStep(1); });
+  function exportData(){
+    var dump={exported:new Date().toISOString().slice(0,19),
+              daka:store, mocks:mocks, road:rdone, gf:gfs, reports:reps};
+    var txt=JSON.stringify(dump,null,1);
+    var fn='kaogong-backup-'+ymd(new Date())+'.json';
+    var ok=false;
+    try{
+      var blob=new Blob([txt],{type:'application/json;charset=utf-8'});
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob); a.download=fn;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ try{URL.revokeObjectURL(a.href); a.remove();}catch(e){} },1500);
+      ok=true;
+    }catch(e){}
+    try{ if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt); }catch(e){}
+    alert(ok ? ('已导出 '+fn+'\n同时复制到剪贴板，建议也粘一份到备忘录。')
+             : ('已复制到剪贴板（'+Math.round(txt.length/1024)+'KB），请粘贴到备忘录保存。'));
+  }
+  document.getElementById('exportBtn').addEventListener('click',exportData);
   document.getElementById('buildTxt').textContent='构建 '+BUILD;
   document.getElementById('forceBtn').addEventListener('click',forceUpdate);
   document.getElementById('prevDay').addEventListener('click',function(){ viewDate.setDate(viewDate.getDate()-1); render(); });
