@@ -324,6 +324,7 @@ button{font-family:inherit;cursor:pointer;}
       <button data-t="行测" class="on">📘 行测</button>
       <button data-t="职测">📗 职测</button>
       <button data-t="文职公共课">🎖️ 文职</button>
+      <button data-t="国考行测">🏛️ 国考</button>
     </div>
 
     <div class="card">
@@ -430,7 +431,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-10-22 21:55';
+  var BUILD='2026-10-25 11:35';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -484,6 +485,10 @@ button{font-family:inherit;cursor:pointer;}
       {k:'pol',n:'政治',q:15,p:1},{k:'cs',n:'常识',q:10,p:1},{k:'yan',n:'言语',q:35,p:1},
       {k:'num',n:'数量',q:10,p:2},{k:'tui',n:'图推',q:5,p:2},{k:'dy',n:'定义',q:10,p:1},
       {k:'lb',n:'类比',q:5,p:1},{k:'lj',n:'逻辑',q:10,p:1.5},{k:'zl',n:'资料',q:20,p:1.5}]},
+    '国考行测':{total:130,full:100,mods:[
+      {k:'pol',n:'政治理论',q:20,p:0.5},{k:'cs',n:'常识',q:15,p:0.5},{k:'yan',n:'言语',q:30,p:0.8},
+      {k:'num',n:'数量',q:10,p:1},{k:'tui',n:'图推',q:10,p:0.8},{k:'dy',n:'定义',q:10,p:0.8},
+      {k:'lb',n:'类比',q:5,p:0.8},{k:'lj',n:'逻辑',q:10,p:0.8},{k:'zl',n:'资料',q:20,p:1}]},
     '职测':{total:100,full:150,mods:[
       {k:'pol',n:'政治',q:5,p:1.5},{k:'cs',n:'常识',q:15,p:1.5},{k:'yan',n:'言语',q:25,p:1.4},
       {k:'num',n:'数量',q:5,p:1.8},{k:'tui',n:'图推',q:5,p:1.4},{k:'dy',n:'定义',q:10,p:1.5},
@@ -516,7 +521,8 @@ button{font-family:inherit;cursor:pointer;}
     {id:'sm8',date:'2026-10-04',type:'行测',total:'72.2',beat:94,mods:{pol:{r:'8',mm:'8',ss:'49'},cs:{r:'5',mm:'4',ss:'18'},yan:{r:'26',mm:'31',ss:'8'},num:{r:'4',mm:'14',ss:'26'},tui:{r:'4',mm:'6',ss:'45'},dy:{r:'8',mm:'9',ss:'8'},lb:{r:'5',mm:'2',ss:'36'},lj:{r:'8',mm:'11',ss:'56'},zl:{r:'18',mm:'25',ss:'32'}}},
     {id:'sm11',date:'2026-10-11',type:'职测',total:'130',beat:null,mods:{pol:{r:'2',mm:'2'},cs:{r:'8',mm:'7'},yan:{r:'25',mm:'19'},num:{r:'3',mm:'8'},tui:{r:'4',mm:'9'},dy:{r:'10',mm:'8'},lb:{r:'9',mm:'5'},lj:{r:'9',mm:'9'},zl:{r:'15',mm:'12'}}},
     {id:'sm9',date:'2026-10-13',type:'职测',total:'121.3',beat:null,mods:{pol:{r:'5'},cs:{r:'8'},yan:{r:'22'},num:{r:'4'},tui:{r:'4'},dy:{r:'8'},lb:{r:'9'},lj:{r:'9'},zl:{r:'12'}}},
-    {id:'sm10',date:'2026-10-15',type:'职测',total:'109',beat:null,mods:{pol:{r:'1',mm:'1'},cs:{r:'8',mm:'9'},yan:{r:'20',mm:'20'},num:{r:'2',mm:'6'},tui:{r:'4',mm:'5'},dy:{r:'7',mm:'8'},lb:{r:'9',mm:'11'},lj:{r:'10',mm:'11'},zl:{r:'13',mm:'18'}}}
+    {id:'sm10',date:'2026-10-15',type:'职测',total:'109',beat:null,mods:{pol:{r:'1',mm:'1'},cs:{r:'8',mm:'9'},yan:{r:'20',mm:'20'},num:{r:'2',mm:'6'},tui:{r:'4',mm:'5'},dy:{r:'7',mm:'8'},lb:{r:'9',mm:'11'},lj:{r:'10',mm:'11'},zl:{r:'13',mm:'18'}}},
+    {id:'sm11',date:'2026-10-25',type:'国考行测',total:'78.3',beat:null,mods:{pol:{r:'13',mm:'12'},cs:{r:'8',mm:'8'},yan:{r:'25',mm:'25'},num:{r:'7',mm:'12'},tui:{r:'8',mm:'9'},dy:{r:'7',mm:'9'},lb:{r:'4',mm:'1',ss:'24'},lj:{r:'9',mm:'13'},zl:{r:'18',mm:'24'}}}
   ];
 
   var store={};
@@ -553,7 +559,7 @@ button{font-family:inherit;cursor:pointer;}
     save();
   }
   function applyMockSeed(){
-    try{ if(localStorage.getItem(MKEY+'_seed7')==='1') return; }catch(e){return;}
+    try{ if(localStorage.getItem(MKEY+'_seed8')==='1') return; }catch(e){return;}
     SEED_MOCKS.forEach(function(m){
       var ex=mocks.filter(function(x){ return (x.date===m.date && x.type===m.type); })[0];
       if(!ex){ mocks.push(JSON.parse(JSON.stringify(m))); return; }
@@ -569,7 +575,7 @@ button{font-family:inherit;cursor:pointer;}
       });
     });
     dedupMocks();
-    try{ localStorage.setItem(MKEY+'_seed7','1'); }catch(e){}
+    try{ localStorage.setItem(MKEY+'_seed8','1'); }catch(e){}
     saveMocks();
   }
   function dedupMocks(){
