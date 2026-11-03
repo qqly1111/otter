@@ -429,9 +429,20 @@ button{font-family:inherit;cursor:pointer;}
   </div>
 </div>
 
+<div class="modal" id="mgModal">
+  <div class="modalbox">
+    <div class="modalhd"><span>校准管理学章数</span><span class="x" id="mgClose">✕</span></div>
+    <div class="hint" style="display:block;margin-top:2px">输入实际学完的最新章数（1–27）。以后每学完一章，点一下章数改掉即可。</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+      <input id="mgInput" type="number" min="1" max="27" inputmode="numeric" placeholder="如 15" style="flex:1;font-size:19px;font-weight:800;padding:9px 12px;border:2px solid #cfe3d8;border-radius:10px;color:var(--green-ink)">
+      <button class="copybtn" id="mgOk">确定</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
-  var BUILD='2026-11-03 21:35';
+  var BUILD='2026-11-03 21:50';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -1714,12 +1725,25 @@ button{font-family:inherit;cursor:pointer;}
     if(tip) tip.textContent='已过 '+passed+' / 27 章（点章数可校准）';
     var mgCell=document.getElementById('mgCell');
     if(mgCell){ mgCell.style.cursor='pointer'; mgCell.onclick=function(){
-      var m=prompt('管理学实际学完到第几章？输入 1–27',''); if(m===null) return;
-      var v=parseInt(m,10);
-      if(!(v>=1&&v<=27)){ alert('请输入 1–27 之间的章数'); return; }
+      var inp=document.getElementById('mgInput');
+      try{ inp.value=localStorage.getItem('kaogong_mgm_v1')||''; }catch(e){ inp.value=''; }
+      inp.style.borderColor='#cfe3d8';
+      document.getElementById('mgModal').classList.add('open');
+      setTimeout(function(){ try{ inp.focus(); }catch(e){} },60);
+    }; }
+    var mgOk=document.getElementById('mgOk');
+    if(mgOk){ mgOk.onclick=function(){
+      var inp=document.getElementById('mgInput');
+      var v=parseInt(String(inp.value).replace(/[^\d]/g,''),10);
+      if(!(v>=1&&v<=27)){ inp.style.borderColor='#e05a5a'; inp.value=''; inp.placeholder='请输入 1–27'; return; }
       try{ localStorage.setItem('kaogong_mgm_v1',''+v); }catch(e){}
+      document.getElementById('mgModal').classList.remove('open');
       renderEval(); renderRoad();
     }; }
+    var mgClose=document.getElementById('mgClose');
+    if(mgClose){ mgClose.onclick=function(){ document.getElementById('mgModal').classList.remove('open'); }; }
+    var mgModalEl=document.getElementById('mgModal');
+    if(mgModalEl){ mgModalEl.addEventListener('click',function(ev){ if(ev.target.id==='mgModal') mgModalEl.classList.remove('open'); }); }
 
     var now='';
     for(var i=0;i<ROAD.length;i++){
