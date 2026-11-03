@@ -431,7 +431,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-10-25 11:35';
+  var BUILD='2026-11-03 20:45';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -1260,7 +1260,6 @@ button{font-family:inherit;cursor:pointer;}
   function repAdd(txt){
     var p=repParse(txt); if(!p) return null;
     var old=reps[p.k];
-    if(old && old.t && old.t.length >= String(txt).trim().length) return p.k;
     reps[p.k]={t:String(txt).trim(), e:p.e}; saveReps(); return p.k;
   }
   function repSorted(){
@@ -1315,8 +1314,8 @@ button{font-family:inherit;cursor:pointer;}
     return s;
   }
   function boardText(){
-    var a=weekAgg();
-    return buildText()+'\n\n'+mockText()+'\n\n【本周复盘 '+a.a+'–'+a.b+'】\n'+(reportMd()||'（还没推送）');
+    var a=prevWeekAgg();
+    return buildText()+'\n\n'+mockText()+'\n\n【周复盘 '+a.a+'–'+a.b+'（已结束）】\n'+(reportMd()||'（还没推送）');
   }
 
   var BOARD_W=1080, B_REP=30;
@@ -1566,8 +1565,8 @@ button{font-family:inherit;cursor:pointer;}
   function daysBetween(a,b){ return Math.round((b-a)/86400000); }
 
   /* 管理学已过章数：按「🎯 攻克」里已打勾的「管理学·第N章」条目累计 */
-  var MGADJ=0; try{MGADJ=parseInt(localStorage.getItem('kaogong_mgadj_v1')||'0',10)||0;}catch(e){MGADJ=0;}
-  function mgmtPassed(){ var n=mgRaw(); return n<0?0:(n>27?27:n); }
+  var MGADJ=1; /* 10/20 之前的已学章数校正基数，烧进代码（12章=10/20后11天+1） */
+  function mgmtPassed(){ var n=mgRaw()+MGADJ; return n<0?0:(n>27?27:n); }
   function mgRaw(){
     var n=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
     while(d<=end){
