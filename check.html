@@ -431,7 +431,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-11-03 20:45';
+  var BUILD='2026-11-03 21:35';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -1566,7 +1566,11 @@ button{font-family:inherit;cursor:pointer;}
 
   /* 管理学已过章数：按「🎯 攻克」里已打勾的「管理学·第N章」条目累计 */
   var MGADJ=1; /* 10/20 之前的已学章数校正基数，烧进代码（12章=10/20后11天+1） */
-  function mgmtPassed(){ var n=mgRaw()+MGADJ; return n<0?0:(n>27?27:n); }
+  function mgmtPassed(){
+    var m=null; try{ m=parseInt(localStorage.getItem('kaogong_mgm_v1'),10); }catch(e){}
+    if(m>=1&&m<=27) return m;
+    var n=mgRaw()+MGADJ; return n<0?0:(n>27?27:n);
+  }
   function mgRaw(){
     var n=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
     while(d<=end){
@@ -1653,7 +1657,7 @@ button{font-family:inherit;cursor:pointer;}
     }
 
     var h='<div class="evTop">'+
-      '<div class="evL"><b>'+mg+'<i>/27</i></b><span>管理学 章</span></div>'+
+      '<div class="evL" id="mgCell"><b>'+mg+'<i>/27</i></b><span>管理学 章</span></div>'+
       '<div class="evL"><b>'+seen+'<i>/22</i></b><span>看过</span></div>'+
       '<div class="evL"><b>'+done+'<i>/22</i></b><span>刷题达标</span></div>'+
     '</div>';
@@ -1707,7 +1711,15 @@ button{font-family:inherit;cursor:pointer;}
     var mb=document.getElementById('mgBar'); if(mb) mb.innerHTML=bar;
     var mn=document.getElementById('mgNames'); if(mn) mn.innerHTML=names;
     var tip=document.getElementById('mgTip');
-    if(tip) tip.textContent='已过 '+passed+' / 27 章';
+    if(tip) tip.textContent='已过 '+passed+' / 27 章（点章数可校准）';
+    var mgCell=document.getElementById('mgCell');
+    if(mgCell){ mgCell.style.cursor='pointer'; mgCell.onclick=function(){
+      var m=prompt('管理学实际学完到第几章？输入 1–27',''); if(m===null) return;
+      var v=parseInt(m,10);
+      if(!(v>=1&&v<=27)){ alert('请输入 1–27 之间的章数'); return; }
+      try{ localStorage.setItem('kaogong_mgm_v1',''+v); }catch(e){}
+      renderEval(); renderRoad();
+    }; }
 
     var now='';
     for(var i=0;i<ROAD.length;i++){
