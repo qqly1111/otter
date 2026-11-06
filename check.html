@@ -442,7 +442,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-11-06 22:10';
+  var BUILD='2026-11-06 22:40';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -1580,6 +1580,8 @@ button{font-family:inherit;cursor:pointer;}
   /* 管理学已过章数：按「🎯 攻克」里已打勾的「管理学·第N章」条目累计 */
   var MGADJ=1; /* 10/20 之前的已学章数校正基数，烧进代码（12章=10/20后11天+1） */
   function mgmtPassed(){
+    var p=mgmtFromPlan();
+    if(p>=1&&p<=27) return p;
     var m=null; try{ m=parseInt(localStorage.getItem('kaogong_mgm_v1'),10); }catch(e){}
     if(m>=1&&m<=27){
       var b=-1; try{ b=parseInt(localStorage.getItem('kaogong_mgm_base_v1'),10); }catch(e){}
@@ -1587,6 +1589,18 @@ button{font-family:inherit;cursor:pointer;}
       return Math.min(27,Math.max(1,m));
     }
     var n=mgRaw()+MGADJ; return n<0?0:(n>27?27:n);
+  }
+  function mgmtFromPlan(){
+    var mx=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
+    while(d<=end){
+      var r=store[ymd(d)];
+      if(r && r.focus){ r.focus.forEach(function(f){
+        var m=/管理学\D*第(\d+)章/.exec(f.name||'');
+        if(m){ var v=parseInt(m[1],10); if(v>mx) mx=v; }
+      }); }
+      d.setDate(d.getDate()+1);
+    }
+    return mx;
   }
   function mgRaw(){
     var n=0, d=new Date(2026,9,20), end=new Date(); end.setHours(23,59,59,0);
