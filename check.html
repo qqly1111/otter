@@ -442,7 +442,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-11-03 21:50';
+  var BUILD='2026-11-06 22:10';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -479,6 +479,7 @@ button{font-family:inherit;cursor:pointer;}
     return DAILY;
   }
   function dayKind(day,r){
+    if(r && r.solo) return {tip:'🤖 托管日 · 只显示当日推送任务', solo:true};
     if(r && r.liteOverride!==undefined){
       return r.liteOverride
         ? {tip:'🧭 自定义日型 · 日常只留 政治 / 申论', lite:true, fixed:true}
@@ -642,12 +643,12 @@ button{font-family:inherit;cursor:pointer;}
     var r=rec(t);
     return [
       {key:'focus', title:'🎯 攻克', items:r.focus.map(function(f){return {id:f.id,name:'🎯 '+f.name,ref:f,type:'focus'};})},
-      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:dailyFor(day,r)).map(function(d){
+      {key:'daily', title:'☑️ 日常', items:(r.rest?[]:(r.solo?DAILY.filter(function(d){return d.id==='mgmt';}):dailyFor(day,r))).map(function(d){
         var nm=d.name;
         if(d.id==='mgmt' && mgName(t)) nm='📚 管理学 · '+mgName(t);
         return {id:d.id,name:nm,type:'fix'};
       })},
-      {key:'special', title:'⭐ 特殊', items:specialItems(t,day).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
+      {key:'special', title:'⭐ 特殊', items:(r.solo?[]:specialItems(t,day)).map(function(s){return {id:s.id,name:s.name,type:'fix'};})},
       {key:'custom', title:'📌 其他', items:r.custom.map(function(c){return {id:c.id,name:'📌 '+c.name,ref:c,type:'custom'};})}
     ];
   }
@@ -1167,7 +1168,7 @@ button{font-family:inherit;cursor:pointer;}
     Object.keys(plans).forEach(function(date){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       var g=plans[date]||{};
-      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined && g.clear===undefined && g.lite===undefined) return;
+      if(g.focus===undefined && g.custom===undefined && g.off===undefined && g.on===undefined && g.rest===undefined && g.clear===undefined && g.lite===undefined && g.solo===undefined) return;
       var r=rec(date);
       var pool=(r.focus||[]).concat(r.custom||[]);
       if(g.focus && g.focus.length) r.focus=mkItems(g.focus,'f',pool);
@@ -1181,6 +1182,7 @@ button{font-family:inherit;cursor:pointer;}
       if(g.on!==undefined) r.specialOn=g.on.slice();
       if(g.rest!==undefined) r.rest=!!g.rest;
       if(g.lite!==undefined) r.liteOverride=!!g.lite;
+      if(g.solo!==undefined) r.solo=!!g.solo;
       n++;
     });
     save();
@@ -1579,7 +1581,11 @@ button{font-family:inherit;cursor:pointer;}
   var MGADJ=1; /* 10/20 之前的已学章数校正基数，烧进代码（12章=10/20后11天+1） */
   function mgmtPassed(){
     var m=null; try{ m=parseInt(localStorage.getItem('kaogong_mgm_v1'),10); }catch(e){}
-    if(m>=1&&m<=27) return m;
+    if(m>=1&&m<=27){
+      var b=-1; try{ b=parseInt(localStorage.getItem('kaogong_mgm_base_v1'),10); }catch(e){}
+      if(!isNaN(b)&&b>=0){ m=m+Math.max(0,mgRaw()-b); }
+      return Math.min(27,Math.max(1,m));
+    }
     var n=mgRaw()+MGADJ; return n<0?0:(n>27?27:n);
   }
   function mgRaw(){
@@ -1736,7 +1742,7 @@ button{font-family:inherit;cursor:pointer;}
       var inp=document.getElementById('mgInput');
       var v=parseInt(String(inp.value).replace(/[^\d]/g,''),10);
       if(!(v>=1&&v<=27)){ inp.style.borderColor='#e05a5a'; inp.value=''; inp.placeholder='请输入 1–27'; return; }
-      try{ localStorage.setItem('kaogong_mgm_v1',''+v); }catch(e){}
+      try{ localStorage.setItem('kaogong_mgm_v1',''+v); localStorage.setItem('kaogong_mgm_base_v1',''+mgRaw()); }catch(e){}
       document.getElementById('mgModal').classList.remove('open');
       renderEval(); renderRoad();
     }; }
