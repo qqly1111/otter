@@ -324,6 +324,7 @@ button{font-family:inherit;cursor:pointer;}
       <button data-t="行测" class="on">📘 行测</button>
       <button data-t="职测">📗 职测</button>
       <button data-t="文职公共课">🎖️ 文职</button>
+      <button data-t="管理学">📚 管理学</button>
       <button data-t="国考行测">🏛️ 国考</button>
     </div>
 
@@ -442,7 +443,7 @@ button{font-family:inherit;cursor:pointer;}
 
 <script>
 (function(){
-  var BUILD='2026-11-06 22:40';
+  var BUILD='2026-11-13 17:20 路线图+管理学tab';
   var KEY='kaogong_daka_v5';
   function forceUpdate(){
     var go=function(){ var u=location.pathname+'?r='+Date.now(); try{ location.replace(u); }catch(e){ try{ location.href=u; }catch(e2){ location.reload(); } } };
@@ -507,7 +508,11 @@ button{font-family:inherit;cursor:pointer;}
       {k:'lb',n:'类比',q:10,p:1.4},{k:'lj',n:'逻辑',q:10,p:1.6},{k:'zl',n:'资料',q:15,p:1.6}]},
     '文职公共课':{total:110,full:100,mods:[
       {k:'wbj1',n:'基本·单选',q:50,p:0.5},{k:'wbj2',n:'基本·多选',q:4,p:1.5},{k:'wbj3',n:'基本·系列',q:6,p:1.5},
-      {k:'wyy',n:'言语',q:20,p:1},{k:'wsl',n:'数量',q:10,p:1.5},{k:'wpd',n:'判断',q:10,p:1.5},{k:'wzl',n:'资料',q:10,p:1}]}
+      {k:'wyy',n:'言语',q:20,p:1},{k:'wsl',n:'数量',q:10,p:1.5},{k:'wpd',n:'判断',q:10,p:1.5},{k:'wzl',n:'资料',q:10,p:1}]},
+    '管理学':{total:55,full:70,mgOnly:true,mods:[
+      {k:'mgjd',n:'判断',p:1,g:'q'},{k:'mgxl',n:'系列单选',p:1.5,g:'q'},{k:'mgdx',n:'多选',p:2,g:'q'},
+      {k:'mgjc',n:'管理基础',g:'c'},{k:'mgzx',n:'组织行为',g:'c'},{k:'mgrl',n:'人力资源',g:'c'},
+      {k:'mggs',n:'公共事业',g:'c'},{k:'mgll',n:'行政伦理',g:'c'},{k:'mggw',n:'公文写作',g:'c'}]}
   };
   var MCOL={pol:'#1f9d59',cs:'#3b82c4',yan:'#e0952a',num:'#d9534f',tui:'#8b5cf6',
             dy:'#0ea5a4',lb:'#ec4899',lj:'#64748b',zl:'#84cc16',
@@ -869,15 +874,29 @@ button{font-family:inherit;cursor:pointer;}
     var mt=MOCK_TYPES[mockType];
     var html='';
     mt.mods.forEach(function(m){
-      html+='<div class="mrow"><span class="mn">'+m.n+'（'+m.q+'题）</span>'+
-        '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="r" placeholder="对">'+
-        '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="mm" placeholder="分">'+
-        '<span class="mu">′</span>'+
-        '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="ss" placeholder="秒">'+
-        '<span class="mu">″</span></div>';
+      if(m.q==null){ /* 管理学：动态题数（对/共双录入），章节行无用时 */
+        html+='<div class="mrow"><span class="mn">'+m.n+'</span>'+
+          '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="r" placeholder="对">'+
+          '<span class="mu">/</span>'+
+          '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="t" placeholder="共">';
+        if(m.g==='q'){
+          html+='<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="mm" placeholder="分">'+
+            '<span class="mu">′</span>'+
+            '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="ss" placeholder="秒">'+
+            '<span class="mu">″</span>';
+        }
+        html+='</div>';
+      } else {
+        html+='<div class="mrow"><span class="mn">'+m.n+'（'+m.q+'题）</span>'+
+          '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="r" placeholder="对">'+
+          '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="mm" placeholder="分">'+
+          '<span class="mu">′</span>'+
+          '<input class="mni" inputmode="numeric" data-k="'+m.k+'" data-f="ss" placeholder="秒">'+
+          '<span class="mu">″</span></div>';
+      }
     });
     document.getElementById('mockRows').innerHTML=html;
-    document.getElementById('mockDate').textContent=mockType+' · 满'+MOCK_TYPES[mockType].total+'题';
+    document.getElementById('mockDate').textContent=mockType+' · 满'+MOCK_TYPES[mockType].total+'题'+(mt.mgOnly?'· '+MOCK_TYPES[mockType].full+'分':'');
     if(lastMock && lastMock.type===mockType){ showMock(lastMock); }
     else { document.getElementById('mockResult').innerHTML='<div class="empty">填完数字 → 点「保存」→ 这里出效率表</div>';
            document.getElementById('mockSum').textContent=''; }
@@ -886,7 +905,7 @@ button{font-family:inherit;cursor:pointer;}
     var mods={}, any=false;
     document.querySelectorAll('#mockRows .mni').forEach(function(inp){
       var k=inp.getAttribute('data-k'), f=inp.getAttribute('data-f'), v=inp.value.replace(/[^\d]/g,'');
-      if(!mods[k]) mods[k]={r:'',mm:'',ss:''};
+      if(!mods[k]) mods[k]={r:'',mm:'',ss:'',t:''};
       if(v!==''){ mods[k][f]=v; any=true; }
     });
     if(!any){ alert('还没填数据呢'); return; }
@@ -906,9 +925,10 @@ button{font-family:inherit;cursor:pointer;}
     var rows=[],totScore=0,totNum=0,totMin=0;
     mt.mods.forEach(function(m){
       var d=mm.mods[m.k]||{}; var r=parseInt(d.r,10)||0; var mi=mins(d.mm,d.ss);
-      var sc=r*m.p; var e=mi>0?sc/mi:0;
-      totScore+=sc; totNum+=r; totMin+=mi;
-      rows.push({m:m,r:r,mi:mi,sc:sc,e:e,has:!!d.r||!!d.mm||!!d.ss});
+      var q=(m.q!=null)?m.q:(parseInt(d.t,10)||0);
+      var sc=r*(m.p||0); var e=mi>0?sc/mi:0;
+      if(m.g!=='c'){ totScore+=sc; totNum+=r; totMin+=mi; }
+      rows.push({m:m,r:r,q:q,mi:mi,sc:sc,e:e,has:!!d.r||!!d.mm||!!d.ss||!!d.t});
     });
     return {rows:rows,totScore:Math.round(totScore*10)/10,totNum:totNum,totMin:Math.round(totMin*10)/10};
   }
@@ -917,10 +937,15 @@ button{font-family:inherit;cursor:pointer;}
   function showMock(mm){
     var c=calcMock(mm);
     var h='<table class="mtable"><tr><th>模块</th><th>对/题</th><th>正确率</th><th>用时</th><th>效率</th></tr>';
+    var lastG=null;
     c.rows.forEach(function(x){
       if(!x.has) return;
-      var g=grade(x.e); var acc=Math.round(x.r/x.m.q*100);
-      h+='<tr><td>'+x.m.n+'</td><td>'+x.r+'/'+x.m.q+'</td><td>'+acc+'%</td><td>'+(x.mi?x.mi.toFixed(1):'-')+'</td><td class="'+g[0]+'">'+g[1]+' '+(x.mi?x.e.toFixed(2):'-')+'</td></tr>';
+      if(x.m.g && x.m.g!==lastG){
+        lastG=x.m.g;
+        h+='<tr><td colspan="5" class="mgsec">'+(x.m.g==='q'?'📐 按题型':'📚 按章节')+'</td></tr>';
+      }
+      var g=grade(x.e); var acc=x.q>0?Math.round(x.r/x.q*100):0;
+      h+='<tr><td>'+x.m.n+'</td><td>'+x.r+'/'+x.q+'</td><td>'+acc+'%</td><td>'+(x.mi?x.mi.toFixed(1):'-')+'</td><td class="'+g[0]+'">'+g[1]+' '+(x.mi?x.e.toFixed(2):'-')+'</td></tr>';
     });
     h+='<tr><td>合计</td><td>'+c.totNum+'/'+MOCK_TYPES[mm.type].total+'</td><td>'+Math.round(c.totNum/MOCK_TYPES[mm.type].total*100)+'%</td><td>'+c.totMin+'</td><td>'+(c.totMin?(c.totScore/c.totMin).toFixed(2):'')+'</td></tr></table>';
     document.getElementById('mockResult').innerHTML=h;
@@ -950,7 +975,8 @@ button{font-family:inherit;cursor:pointer;}
         c.rows.forEach(function(x){
           if(!x.has) return;
           var g=grade(x.e);
-          h+='<tr><td>'+x.m.n+'</td><td>'+x.r+'/'+x.m.q+'</td><td>'+(x.mi?x.mi.toFixed(1):'-')+'</td><td class="'+g[0]+'">'+g[1]+' '+(x.mi?x.e.toFixed(2):'-')+'</td></tr>';
+          var acc=x.q>0?Math.round(x.r/x.q*100):0;
+          h+='<tr><td>'+x.m.n+'</td><td>'+x.r+'/'+x.q+'</td><td>'+(x.mi?x.mi.toFixed(1):'-')+'</td><td class="'+g[0]+'">'+g[1]+' '+(x.mi?x.e.toFixed(2):'-')+'</td></tr>';
         });
         h+='</table><div style="text-align:right;margin-top:9px"><span class="delbtn" data-del="'+mm.id+'">删除这条</span></div></div>';
       }
@@ -1075,7 +1101,12 @@ button{font-family:inherit;cursor:pointer;}
       '<div class="kpi"><b>'+avg.toFixed(1)+'</b><span>平均分</span></div>'+
       '<div class="kpi"><b style="color:'+(delta>=0?'#1f9d59':'#d9534f')+'">'+(delta>=0?'+':'')+delta.toFixed(1)+'</b><span>较首次</span></div>';
 
-    // 效率趋势
+    // 效率趋势（管理学：只看总分趋势+正确率表，跳过效率趋势）
+    if(MOCK_TYPES[mockType].mgOnly){
+      eBox.innerHTML='<div class="empty">管理学看正确率表（按题型/按章节）即可<br>趋势看上方总分曲线</div>';
+      lBox.innerHTML='';
+      return;
+    }
     var mods=MOCK_TYPES[mockType].mods;
     Object.keys(effOn).length || mods.forEach(function(m){ effOn[m.k]=true; });
     var allE=[], series=[];
@@ -1548,15 +1579,15 @@ button{font-family:inherit;cursor:pointer;}
     gfNote:'累计 16 个（＋经济·人文）',
     keep:'行测保温（掐表）｜国防军队累计 14h'},
    {w:'W4',a:'2026-11-09',b:'2026-11-15',ph:1,tag:'打底期·一轮完',
-    ch:'管理学 第21–27章｜行政纪律·忠诚责任正义·伦理监督·公文概述·法定公文·管理写作·作文思路',
-    goal:{mg:27,seen:22,done:0,sl:27},
+    ch:'管理学 第21–25章｜行政纪律·忠诚责任正义·伦理监督·公文概述·法定公文（第26–27章·写作课顺延 11/16）',
+    goal:{mg:25,seen:22,done:0,sl:25},
     gfNote:'累计 22 个（全过一遍）',
     keep:'申论/综应 每天 1 题｜10 类法定公文过一遍｜手写公文 1 篇'},
-   {w:'W5',a:'2026-11-16',b:'2026-11-22',ph:2,tag:'二轮·刷题',
-    ch:'管理学二轮｜第1篇 管理学基础 ＋ 第2篇 组织行为学 客观题二刷',
+   {w:'W5',a:'2026-11-16',b:'2026-11-22',ph:2,tag:'二轮·启动',
+    ch:'11/16 写作模板课（第26–27章）＋真题客观题订正｜11/17 起管理学二轮（按自测错题定节奏）',
     goal:{mg:27,seen:22,done:9,sl:34},
     gfNote:'刷题达标：政治·法律',
-    keep:'申论/综应 每天 1 题｜第1、2篇客观题二刷｜论述题列提纲'},
+    keep:'申论大作文 11/13·11/15·11/22 各 1 篇｜二轮按错题回扫｜11/17 文职缴费'},
    {w:'W6',a:'2026-11-23',b:'2026-11-29',ph:2,tag:'二轮·国考周',
     ch:'管理学二轮｜第3–7篇 客观题二刷 ＋ 写作题入门',
     goal:{mg:27,seen:22,done:13,sl:41},
@@ -1705,13 +1736,13 @@ button{font-family:inherit;cursor:pointer;}
     var start=d2('2026-10-20');
     var elAll=Math.max(1,daysBetween(start,today)+1);
     var spd=mg/elAll;
-    if(elAll>=2){
-      var left=Math.max(0,daysBetween(today,d2('2026-11-15')));
+    var left=Math.max(0,daysBetween(today,d2('2026-11-15')));
+    if(elAll>=2 && left>0){
       var proj=Math.min(27, Math.round(mg + spd*left));
       h+='<div class="evLine"><span>速度 '+spd.toFixed(2)+' 章/天</span><span>到 11/15 约 '+proj+' 章</span></div>';
       if(proj<27){
-        var need=((27-mg)/Math.max(1,left)).toFixed(2);
-        h+='<div class="evadv">按这个速度到不了 27 章。要么提到 <b>'+need+' 章/天</b>，要么把 W4 收尾顺延到 11/20（二轮整体后移 5 天）。</div>';
+        var need=((27-mg)/left).toFixed(2);
+        h+='<div class="evadv">按这个速度到不了 27 章。要么提到 <b>'+need+' 章/天</b>，要么把写作课（26–27章）并进下周首日补完。</div>';
       }
     }
     box.innerHTML=h;
